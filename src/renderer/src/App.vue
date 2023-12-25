@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import MemoChannel from './components/MemoChannel.vue'
+import MemoLists from './components/MemoLists.vue'
 import Versions from './components/Versions.vue'
 </script>
 
@@ -7,11 +9,9 @@ import Versions from './components/Versions.vue'
     <h1>雑メモ</h1>
   </header>
   <main>
-    <div class="memo-channel">
-      <p>メモチャンネル</p>
-    </div>
-    <div clas="memo-list">
-      <p>メモリスト</p>
+    <div class="flex">
+      <MemoChannel />
+      <MemoLists />
     </div>
   </main>
 </template>

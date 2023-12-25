@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import MemoChannel from './components/MemoChannel.vue'
 import MemoLists from './components/MemoLists.vue'
-import Versions from './components/Versions.vue'
 </script>
 
 <template>

@@ -1,85 +1,16 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+interface Props {
+  memo: string
+}
+
+const props = defineProps<Props>();
+
+</script>
 
 <template>
   <li class="memo-card">
     <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
-  </li>
-  <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>メモ内容</p>
+    <p>{{ props.memo }}</p>
   </li>
 </template>
 
@@ -94,4 +25,3 @@ h3 {
   border-bottom: 1px solid #000;
 }
 </style>
-%windir%\system32\wsl.exe -cur_console:pm:/mnt

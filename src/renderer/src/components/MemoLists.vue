@@ -1,18 +1,41 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 import MemoCard from './MemoCard.vue'
+
+const memo = ref('')
+const memoList = ref<string[]>([])
+
+const onAdd = (e: Event): void => {
+  e.preventDefault()
+  memoList.value.push(memo.value)
+  memo.value = ''
+}
+
 </script>
 
 <template>
   <div class="memo-lists scrollable-content">
-    <ul>
-      <MemoCard />
+    <ul v-for="(memo, index) in memoList" :key="index">
+      <MemoCard
+        :memo="memo"
+      />
     </ul>
+  </div>
+  <div class="memo-form">
+    <form @submit.prevent="onAdd">
+      <!-- コントロールキーを押しながらEnterでも送信できる -->
+      <textarea name="" id="" cols="30" rows="10" v-model="memo" placeholder="メモを入力してください" @keydown.enter.ctrl="onAdd">
+
+      </textarea>
+      <button class="submit" type="submit">送信</button>
+    </form>
   </div>
 </template>
 
 <style lang="scss" scoped>
 @import '../assets/scss/main.scss';
+
+$scrollbar-width: 12px;
 .memo-lists {
   width: 80%;
   height: calc(100vh - #{$header-height});
@@ -26,7 +49,7 @@ import MemoCard from './MemoCard.vue'
 
 /* スクロールバー全体のスタイルを設定 */
 .scrollable-content::-webkit-scrollbar {
-  width: 12px; /* スクロールバーの幅 */
+  width: $scrollbar-width; /* 縦スクロールの幅 */
   background-color: #f5f5f5; /* スクロールバーの背景色 */
 }
 
@@ -41,4 +64,43 @@ import MemoCard from './MemoCard.vue'
 .scrollable-content::-webkit-scrollbar-thumb:hover {
   background-color: #a0a0a0; /* ホバー時のつまみの色 */
 }
+
+.memo-form {
+  position: absolute;
+  bottom: 5px;
+  left: 20%;
+  width: calc(80% - $scrollbar-width);
+  height: 140px;
+  padding: 4px 10px;
+  background-color: #a0a0a0;
+  border: 1px solid #000;
+}
+
+.memo-form form {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.memo-form textarea {
+  width: 100%;
+  height: 100px;
+  padding: 5px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: normal;
+  background-color: #e1e0de;
+}
+
+.memo-form .submit {
+  margin: 0 0 0 auto;
+  width: 40px;
+  height: 30px;
+  border: none;
+  outline: none;
+  background-color: #e1e0de;
+  cursor: pointer;
+}
+
 </style>

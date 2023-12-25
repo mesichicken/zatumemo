@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Memo } from './types'
 import MemoCard from './MemoCard.vue'
 
-const memo = ref('')
-const memoList = ref<string[]>([])
+const memo_content = ref<string>('')
+const memoList = ref<Memo[]>([])
 
 const onAdd = (e: Event): void => {
+  const memo_date: Date = new Date()
+  const memo: Memo = {
+    memo: memo_content.value,
+    date: memo_date
+  }
+  memoList.value.push(memo)
   e.preventDefault()
-  memoList.value.push(memo.value)
-  memo.value = ''
+
+  memo_content.value = ''
 }
 
 </script>
@@ -24,7 +31,7 @@ const onAdd = (e: Event): void => {
   <div class="memo-form">
     <form @submit.prevent="onAdd">
       <!-- コントロールキーを押しながらEnterでも送信できる -->
-      <textarea name="" id="" cols="30" rows="10" v-model="memo" placeholder="メモを入力してください" @keydown.enter.ctrl="onAdd">
+      <textarea name="" id="" cols="30" rows="10" v-model="memo_content" placeholder="メモを入力してください" @keydown.enter.ctrl="onAdd">
 
       </textarea>
       <button class="submit" type="submit">送信</button>

@@ -1,16 +1,28 @@
 <script setup lang="ts">
-interface Props {
-  memo: string
+import { Memo } from './types'
+
+type Props = {
+  memo: Memo
 }
 
 const props = defineProps<Props>();
+
+const formatDate = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+
+  return `${year}/${month}/${day} ${hour}:${minute}`
+}
 
 </script>
 
 <template>
   <li class="memo-card">
-    <h3>2023-12-25 00:00:00</h3>
-    <p>{{ props.memo }}</p>
+    <h3>{{ formatDate(props.memo.date) }}</h3>
+    <p>{{ props.memo.memo }}</p>
   </li>
 </template>
 

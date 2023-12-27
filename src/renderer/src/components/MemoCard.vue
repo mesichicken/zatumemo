@@ -19,7 +19,7 @@ const formatDate = (date: Date): string => {
 </script>
 
 <template>
-  <li class="memo-card">
+  <li class="container px-1 py-2 border-b-2">
     <h3>{{ formatDate(props.memo.date) }}</h3>
     <p>{{ props.memo.memo }}</p>
   </li>
@@ -29,10 +29,5 @@ const formatDate = (date: Date): string => {
 h3 {
   font-size: 10px;
   font-weight: normal;
-}
-.memo-card {
-  width: 100%;
-  padding: 10px 5px;
-  border-bottom: 1px solid #000;
 }
 </style>

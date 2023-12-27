@@ -30,19 +30,18 @@ const onAdd = (e: Event): void => {
       <div class="container py-1">
         <!-- コントロールキーを押しながらEnterでも送信できる -->
         <textarea
-          id=""
           v-model="memo_content"
-          name=""
           cols="30"
           rows="10"
           placeholder="メモを入力してください"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           @keydown.enter.ctrl="onAdd"
         >
         </textarea>
       </div>
 
       <button
-        class="submit bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        class="submit bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 hover:border-transparent rounded border-0 outline-none"
         type="submit"
       >
         送信
@@ -95,22 +94,13 @@ $scrollbar-width: 12px;
 .memo-form textarea {
   width: 100%;
   height: 80px;
-  padding: 5px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
   font-size: 16px;
   font-weight: normal;
-  background-color: #e1e0de;
 }
 
 .memo-form .submit {
   margin: 0 0 0 auto;
   line-height: 10px;
-  // width: 40px;
-  // height: 30px;
-  border: none;
-  outline: none;
   background-color: #e1e0de;
   cursor: pointer;
 }

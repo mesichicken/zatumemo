@@ -19,10 +19,10 @@ const formatDate = (date: Date): string => {
 </script>
 
 <template>
-  <li class="container px-1 py-2 border-b-2">
+  <div>
     <h3>{{ formatDate(props.memo.date) }}</h3>
     <p>{{ props.memo.memo }}</p>
-  </li>
+  </div>
 </template>
 
 <style lang="scss" scoped>

@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="memo-channel">
+  <div class="memo-channel bg-gray-700 border-r-2 border-gray-500">
     <h2>メモチャンネル</h2>
   </div>
 </template>
@@ -20,6 +20,5 @@ h2 {
 .memo-channel {
   width: 20%;
   height: calc(100vh - #{$header-height});
-  background-color: #e4da8b;
 }
 </style>

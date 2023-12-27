@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { defineEmits, ref } from 'vue'
 import { Memo } from './types'
-type Props = {
-  memoContent: string
-}
-const props = defineProps<Props>()
-const memoContent = ref<string>(props.memoContent)
+
+const memo_content = ref<string>('')
 interface Emit {
   (event: 'add', memo: Memo): void
 }
@@ -14,13 +11,13 @@ const emit = defineEmits<Emit>()
 const onAdd = (): void => {
   const memo_date: Date = new Date()
   const memo: Memo = {
-    memo: memoContent.value,
+    memo: memo_content.value,
     date: memo_date
   }
 
   emit('add', memo)
 
-  memoContent.value = ''
+  memo_content.value = ''
 }
 </script>
 
@@ -31,9 +28,9 @@ const onAdd = (): void => {
       <div class="flex items-center flex-wrap px-3 py-2 bg-gray-50 dark:bg-gray-700 w-full">
         <textarea
           id="chat"
-          v-model="memoContent"
+          v-model="memo_content"
           rows="1"
-          class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="block p-2.5 w-full text-sm text-gray-900 rounded-lg border bg-gray-800 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
           placeholder="メモを入力"
           @keydown.enter.ctrl="onAdd"
         ></textarea>

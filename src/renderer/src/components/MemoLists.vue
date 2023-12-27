@@ -4,7 +4,6 @@ import { Memo } from './types'
 import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
 
-const memo_content = ref<string>('')
 const memoList = ref<Memo[]>([])
 const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
@@ -44,14 +43,16 @@ const onAdd = (newMemo: Memo): void => {
 <template>
   <div
     ref="memoListContainer"
-    class="memo-lists scrollable-content"
+    class="memo-lists scrollable-content bg-gray-700 text-gray-50"
     :style="{ height: `calc(100vh - 60px - ${memoFormHeight}px)` }"
   >
-    <ul v-for="(memo, index) in memoList" :key="index">
-      <MemoCard :memo="memo" />
-    </ul>
+    <transition-group name="memo" tag="ul">
+      <li v-for="(memo, index) in memoList" :key="index" class="container px-1 py-2 border-b-2 border-gray-500">
+        <MemoCard :memo="memo" />
+      </li>
+    </transition-group>
   </div>
-  <MemoForm class="memo-form" :memo-content="memo_content" @add="onAdd" />
+  <MemoForm class="memo-form" @add="onAdd" />
 </template>
 
 <style lang="scss" scoped>
@@ -70,18 +71,27 @@ const onAdd = (newMemo: Memo): void => {
 /* スクロールバー全体のスタイルを設定 */
 .scrollable-content::-webkit-scrollbar {
   width: $scrollbar-width; /* 縦スクロールの幅 */
-  background-color: #f5f5f5; /* スクロールバーの背景色 */
+  background-color: #5f5f5f; /* スクロールバーの背景色 */
 }
 
 /* スクロールバーのつまみ部分をスタイリング */
 .scrollable-content::-webkit-scrollbar-thumb {
   background-color: #bdbdbd; /* つまみの色 */
   border-radius: 6px; /* つまみの角を丸くする */
-  border: 3px solid #f5f5f5; /* つまみの外側の余白（背景色と同じ色にすると良い） */
+  border: 3px solid #575757; /* つまみの外側の余白（背景色と同じ色にすると良い） */
 }
 
 /* スクロールバーのつまみがホバーされたときのスタイル */
 .scrollable-content::-webkit-scrollbar-thumb:hover {
   background-color: #a0a0a0; /* ホバー時のつまみの色 */
+}
+
+/* トランジションのスタイル */
+.memo-enter-active, .memo-leave-active {
+  transition: opacity 0.5s;
+}
+
+.memo-enter, .memo-leave-to {
+  opacity: 0;
 }
 </style>

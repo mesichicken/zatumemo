@@ -5,7 +5,7 @@ type Props = {
   memo: Memo
 }
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const formatDate = (date: Date): string => {
   const year = date.getFullYear()
@@ -16,7 +16,6 @@ const formatDate = (date: Date): string => {
 
   return `${year}/${month}/${day} ${hour}:${minute}`
 }
-
 </script>
 
 <template>

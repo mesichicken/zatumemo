@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 $header-height: 60px;
 
 * {
@@ -22,8 +26,6 @@ ul {
   list-style: none;
 }
 
-.flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.\left-1\/5 {
+  left: 20%;
 }

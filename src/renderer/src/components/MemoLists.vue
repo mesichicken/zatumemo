@@ -17,24 +17,36 @@ const onAdd = (e: Event): void => {
 
   memo_content.value = ''
 }
-
 </script>
 
 <template>
   <div class="memo-lists scrollable-content">
     <ul v-for="(memo, index) in memoList" :key="index">
-      <MemoCard
-        :memo="memo"
-      />
+      <MemoCard :memo="memo" />
     </ul>
   </div>
-  <div class="memo-form">
-    <form @submit.prevent="onAdd">
-      <!-- コントロールキーを押しながらEnterでも送信できる -->
-      <textarea name="" id="" cols="30" rows="10" v-model="memo_content" placeholder="メモを入力してください" @keydown.enter.ctrl="onAdd">
+  <div class="absolute bottom-0 left-1/5 memo-form">
+    <form class="flex justify-center flex-wrap" @submit.prevent="onAdd">
+      <div class="container py-1">
+        <!-- コントロールキーを押しながらEnterでも送信できる -->
+        <textarea
+          id=""
+          v-model="memo_content"
+          name=""
+          cols="30"
+          rows="10"
+          placeholder="メモを入力してください"
+          @keydown.enter.ctrl="onAdd"
+        >
+        </textarea>
+      </div>
 
-      </textarea>
-      <button class="submit" type="submit">送信</button>
+      <button
+        class="submit bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        type="submit"
+      >
+        送信
+      </button>
     </form>
   </div>
 </template>
@@ -73,24 +85,16 @@ $scrollbar-width: 12px;
 }
 
 .memo-form {
-  position: absolute;
-  bottom: 5px;
-  left: 20%;
   width: calc(80% - $scrollbar-width);
-  height: 140px;
+  height: 130px;
   padding: 4px 10px;
   background-color: #a0a0a0;
   border: 1px solid #000;
 }
 
-.memo-form form {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
 .memo-form textarea {
   width: 100%;
-  height: 100px;
+  height: 80px;
   padding: 5px;
   border-radius: 10px;
   border: none;
@@ -102,12 +106,12 @@ $scrollbar-width: 12px;
 
 .memo-form .submit {
   margin: 0 0 0 auto;
-  width: 40px;
-  height: 30px;
+  line-height: 10px;
+  // width: 40px;
+  // height: 30px;
   border: none;
   outline: none;
   background-color: #e1e0de;
   cursor: pointer;
 }
-
 </style>

@@ -1,22 +1,12 @@
 <script setup lang="ts">
-import { defineEmits, ref } from 'vue'
-import { Memo } from './types'
+import { ref } from 'vue'
+import { useMemosStore } from '@renderer/stores/memos'
 
+const memosStore = useMemosStore()
 const memo_content = ref<string>('')
-interface Emit {
-  (event: 'add', memo: Memo): void
-}
-const emit = defineEmits<Emit>()
 
 const onAdd = (): void => {
-  const memo_date: Date = new Date()
-  const memo: Memo = {
-    memo: memo_content.value,
-    date: memo_date
-  }
-
-  emit('add', memo)
-
+  memosStore.addMemo(memo_content.value)
   memo_content.value = ''
 }
 </script>

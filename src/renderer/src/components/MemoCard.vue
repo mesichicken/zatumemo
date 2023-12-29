@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Memo } from './types'
+import { Memo } from '@renderer/types'
 
 type Props = {
   memo: Memo

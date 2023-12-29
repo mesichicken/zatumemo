@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="memo-channel bg-gray-700 border-r-2 border-gray-500">
+  <div class="memo-channel bg-gray-700 border-r-2 border-gray-600 text-gray-50">
     <h2>メモチャンネル</h2>
   </div>
 </template>

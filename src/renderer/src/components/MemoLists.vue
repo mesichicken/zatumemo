@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
-import { Memo } from './types'
+import { onMounted, onBeforeUnmount, ref, nextTick, computed } from 'vue'
+import { Memo } from '@renderer/types'
+import { useMemosStore } from '@renderer/stores/memos'
 import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
 
-const memoList = ref<Memo[]>([])
+const memosStore = useMemosStore()
+memosStore.fetchMemos()
+const memoList = computed((): Memo[] => {
+  return memosStore.memos
+})
 const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
 
@@ -47,7 +52,11 @@ const onAdd = (newMemo: Memo): void => {
     :style="{ height: `calc(100vh - 60px - ${memoFormHeight}px)` }"
   >
     <transition-group name="memo" tag="ul">
-      <li v-for="(memo, index) in memoList" :key="index" class="container px-1 py-2 border-b-2 border-gray-500">
+      <li
+        v-for="(memo, index) in memoList"
+        :key="index"
+        class="container px-1 py-2 border-b-2 border-gray-500"
+      >
         <MemoCard :memo="memo" />
       </li>
     </transition-group>
@@ -87,11 +96,13 @@ const onAdd = (newMemo: Memo): void => {
 }
 
 /* トランジションのスタイル */
-.memo-enter-active, .memo-leave-active {
+.memo-enter-active,
+.memo-leave-active {
   transition: opacity 0.5s;
 }
 
-.memo-enter, .memo-leave-to {
+.memo-enter,
+.memo-leave-to {
   opacity: 0;
 }
 </style>

@@ -1,5 +1,6 @@
 export type Memo = {
   id: number
   memo: string
-  date: Date
+  created_date: Date
+  updated_date: Date
 }

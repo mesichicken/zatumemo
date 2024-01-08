@@ -1,4 +1,4 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
@@ -11,6 +11,11 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('dbOp', {
+      createDb: async () => ipcRenderer.invoke('createDb'), // データベース作成
+      selectAll: async () => ipcRenderer.invoke('selectAll'), // データベース全件取得
+      insertData: async (memoText) => ipcRenderer.invoke('insertData', memoText) // データベースにデータを追加
+    })
   } catch (error) {
     console.error(error)
   }

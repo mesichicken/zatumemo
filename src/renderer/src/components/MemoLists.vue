@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, nextTick, computed } from 'vue'
+import { onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { Memo } from '@renderer/types'
-import { useMemosStore } from '@renderer/stores/memos'
 import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
 
-const memosStore = useMemosStore()
-memosStore.fetchMemos()
-const memoList = computed((): Memo[] => {
-  return memosStore.memos
-})
 const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
+const memoList = ref<Memo[]>([])
 
 // 高さを更新する関数
 const updateMemoFormHeight = () => {
@@ -29,7 +24,20 @@ const scrollToBottom = () => {
   })
 }
 
-onMounted(() => {
+async function fetchData() {
+  try {
+    /* @ts-ignore dbOpでエラーを出さない */
+    const data = await window.dbOp.selectAll()
+    memoList.value = data
+    console.log('data fetched:', data)
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    alert('メモの取得に失敗しました')
+  }
+}
+
+onMounted(async () => {
+  fetchData()
   updateMemoFormHeight() // コンポーネントがマウントされたら高さを更新
   window.addEventListener('resize', updateMemoFormHeight) // ウィンドウのリサイズに対応
 })
@@ -37,9 +45,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateMemoFormHeight) // クリーンアップ
 })
-
-const onAdd = (newMemo: Memo): void => {
-  memoList.value.push(newMemo)
+const onAdd = (): void => {
+  fetchData()
   nextTick(updateMemoFormHeight) // メモが追加された後に高さを更新
   scrollToBottom() // メモが追加された後に一番下までスクロール
 }

@@ -1,7 +1,16 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import * as sqlite3 from 'sqlite3'
+import { Memo } from '@renderer/types'
+
+const db = new sqlite3.Database('./zatumemo_database.db', (err) => {
+  if (err) {
+    console.error(err.message)
+  }
+  console.log('Connected to SQLite database')
+})
 
 function createWindow(): void {
   // Create the browser window.
@@ -39,6 +48,47 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  ipcMain.handle('createDb', () => {
+    new Promise<void>((resolve, reject) => {
+      db.run(
+        'CREATE TABLE IF NOT EXISTS memo (id INTEGER PRIMARY KEY AUTOINCREMENT, memo TEXT, created_date datetime, updated_date datetime)',
+        (err) => {
+          if (err) reject(err)
+          resolve()
+        }
+      )
+    })
+  })
+
+  // SELECT文でのデータ取得
+  ipcMain.handle(
+    'selectAll',
+    () =>
+      new Promise<Memo[]>((resolve, reject) => {
+        db.serialize(() => {
+          db.all('SELECT * FROM memo', (err, rows: Memo[]) => {
+            if (err) reject(err)
+            resolve(rows)
+          })
+        })
+      })
+  )
+
+  // データ挿入
+  ipcMain.handle(
+    'insertData',
+    (event, memoText) =>
+      new Promise<void>((resolve, reject) => {
+        db.run(
+          'INSERT INTO memo (memo, created_date, updated_date) VALUES (?, datetime("now", "localtime"), datetime("now", "localtime"));',
+          memoText,
+          (err) => {
+            if (err) reject(err)
+            resolve()
+          }
+        )
+      })
+  )
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -67,5 +117,12 @@ app.on('window-all-closed', () => {
   }
 })
 
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
+// アプリケーションが終了する前にデータベースを閉じる
+app.on('before-quit', () => {
+  db.close((err) => {
+    if (err) {
+      console.error(err.message)
+    }
+    console.log('Close the database connection.')
+  })
+})

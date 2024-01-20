@@ -45,8 +45,9 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateMemoFormHeight) // クリーンアップ
 })
-const onAdd = (): void => {
-  fetchData()
+const onAdd = (memo: Memo): void => {
+  // fetchData()
+  memoList.value.push(memo)
   nextTick(updateMemoFormHeight) // メモが追加された後に高さを更新
   scrollToBottom() // メモが追加された後に一番下までスクロール
 }

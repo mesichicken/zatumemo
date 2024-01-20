@@ -14,6 +14,7 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('dbOp', {
       createDb: async () => ipcRenderer.invoke('createDb'), // データベース作成
       selectAll: async () => ipcRenderer.invoke('selectAll'), // データベース全件取得
+      selectLastMemo: async () => ipcRenderer.invoke('selectLastMemo'), // 最後に挿入したメモを取得
       insertData: async (memoText) => ipcRenderer.invoke('insertData', memoText) // データベースにデータを追加
     })
   } catch (error) {

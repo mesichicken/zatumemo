@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-// import { useMemosStore } from '@renderer/stores/memos'
+import { Memo } from '@renderer/types'
 
-// const memosStore = useMemosStore()
 const memo_content = ref<string>('')
-interface Emits {
-  (event: 'add'): void
+type Emits = {
+  (event: 'add', memo: Memo): void
 }
 const emit = defineEmits<Emits>()
 const onAdd = async (): Promise<void> => {
   try {
     /* @ts-ignore dbOpでエラーを出さない */
     await window.dbOp.insertData(memo_content.value)
+    /* @ts-ignore dbOpでエラーを出さない */
+    const Memo: Memo = await window.dbOp.selectLastMemo()
+    emit('add', Memo)
     memo_content.value = ''
-    emit('add')
   } catch (error) {
     console.error(error)
     alert('メモ追加時にエラーが発生しました')

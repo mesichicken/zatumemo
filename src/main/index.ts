@@ -51,7 +51,7 @@ app.whenReady().then(() => {
   ipcMain.handle('createDb', () => {
     new Promise<void>((resolve, reject) => {
       db.run(
-        'CREATE TABLE IF NOT EXISTS memo (id INTEGER PRIMARY KEY AUTOINCREMENT, memo TEXT, created_date datetime, updated_date datetime)',
+        'CREATE TABLE IF NOT EXISTS memo (id INTEGER PRIMARY KEY AUTOINCREMENT, memo TEXT, created_at datetime, updated_at datetime)',
         (err) => {
           if (err) reject(err)
           resolve()
@@ -74,13 +74,27 @@ app.whenReady().then(() => {
       })
   )
 
+  // 最後に挿入したメモを取得
+  ipcMain.handle(
+    'selectLastMemo',
+    () =>
+      new Promise<Memo>((resolve, reject) => {
+        db.serialize(() => {
+          db.get('SELECT * FROM memo ORDER BY id DESC LIMIT 1;', (err, row: Memo) => {
+            if (err) reject(err)
+            resolve(row)
+          })
+        })
+      })
+  )
+
   // データ挿入
   ipcMain.handle(
     'insertData',
-    (event, memoText) =>
+    (_, memoText) =>
       new Promise<void>((resolve, reject) => {
         db.run(
-          'INSERT INTO memo (memo, created_date, updated_date) VALUES (?, datetime("now", "localtime"), datetime("now", "localtime"));',
+          'INSERT INTO memo (memo, created_at, updated_at) VALUES (?, datetime("now", "localtime"), datetime("now", "localtime"));',
           memoText,
           (err) => {
             if (err) reject(err)

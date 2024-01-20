@@ -20,7 +20,7 @@ const formatDate = (date: Date): string => {
 
 <template>
   <div>
-    <h3>{{ formatDate(new Date(props.memo.created_date)) }}</h3>
+    <h3>{{ formatDate(new Date(props.memo.created_at)) }}</h3>
     <p>{{ props.memo.memo }}</p>
   </div>
 </template>

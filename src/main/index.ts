@@ -51,7 +51,7 @@ app.whenReady().then(() => {
   ipcMain.handle('createDb', () => {
     new Promise<void>((resolve, reject) => {
       db.run(
-        'CREATE TABLE IF NOT EXISTS memo (id INTEGER PRIMARY KEY AUTOINCREMENT, memo TEXT, created_at datetime, updated_at datetime)',
+        'CREATE TABLE IF NOT EXISTS memo (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, created_at datetime, updated_at datetime)',
         (err) => {
           if (err) reject(err)
           resolve()
@@ -94,7 +94,7 @@ app.whenReady().then(() => {
     (_, memoText) =>
       new Promise<void>((resolve, reject) => {
         db.run(
-          'INSERT INTO memo (memo, created_at, updated_at) VALUES (?, datetime("now", "localtime"), datetime("now", "localtime"));',
+          'INSERT INTO memo (content, created_at, updated_at) VALUES (?, datetime("now", "localtime"), datetime("now", "localtime"));',
           memoText,
           (err) => {
             if (err) reject(err)

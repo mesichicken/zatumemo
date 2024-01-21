@@ -11,16 +11,10 @@ $scrollbar-width: 12px;
   box-sizing: border-box;
 }
 
-header {
-  background-color: #11171f;
-  color: #fff;
-  padding: 10px 20px;
-  height: $header-height;
-}
-
 h1 {
   font-size: 24px;
   font-weight: 500;
+  margin-bottom: 5px;
 }
 
 ul {

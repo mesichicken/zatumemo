@@ -4,9 +4,6 @@ import MemoLists from './components/MemoLists.vue'
 </script>
 
 <template>
-  <header>
-    <h1>雑メモ</h1>
-  </header>
   <main>
     <div class="flex">
       <MemoChannel />

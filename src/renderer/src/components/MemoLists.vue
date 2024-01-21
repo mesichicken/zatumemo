@@ -57,7 +57,7 @@ const onAdd = (memo: Memo): void => {
   <div
     ref="memoListContainer"
     class="memo-lists scrollable-content bg-gray-700 text-gray-50"
-    :style="{ height: `calc(100vh - 60px - ${memoFormHeight}px)` }"
+    :style="{ height: `calc(100vh - ${memoFormHeight}px)` }"
   >
     <transition-group name="memo" tag="ul">
       <li

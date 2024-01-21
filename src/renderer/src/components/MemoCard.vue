@@ -21,7 +21,7 @@ const formatDate = (date: Date): string => {
 <template>
   <div>
     <h3>{{ formatDate(new Date(props.memo.created_at)) }}</h3>
-    <p>{{ props.memo.memo }}</p>
+    <p class="memo-content">{{ props.memo.memo }}</p>
   </div>
 </template>
 
@@ -29,5 +29,9 @@ const formatDate = (date: Date): string => {
 h3 {
   font-size: 10px;
   font-weight: normal;
+}
+
+.memo-content {
+  white-space: pre-wrap;
 }
 </style>

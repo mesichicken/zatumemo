@@ -1,12 +1,25 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
-import { Memo } from '@renderer/types'
+import { onMounted, onBeforeUnmount, ref, nextTick, watchEffect } from 'vue'
+import { Memo, Notebook } from '@renderer/types'
 import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
+import { useNotebookStore } from '@renderer/store/notebook'
+const store = useNotebookStore()
+const currentNotebook = ref<Notebook | null>(store.currentNotebook)
 
 const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
 const memoList = ref<Memo[]>([])
+
+watchEffect(() => {
+  currentNotebook.value = store.currentNotebook
+  console.log('!!!!!currentNotebook changed', currentNotebook.value)
+  if (currentNotebook.value) {
+    fetchData()
+  } else {
+    memoList.value = []
+  }
+})
 
 // 高さを更新する関数
 const updateMemoFormHeight = () => {
@@ -26,8 +39,11 @@ const scrollToBottom = () => {
 
 async function fetchData() {
   try {
+    if (!currentNotebook.value) {
+      return
+    }
     /* @ts-ignore dbOpでエラーを出さない */
-    const data = await window.dbOp.selectAll()
+    const data = await window.dbOp.selectMemo(currentNotebook.value.id)
     memoList.value = data
     console.log('data fetched:', data)
   } catch (error) {
@@ -37,7 +53,9 @@ async function fetchData() {
 }
 
 onMounted(async () => {
-  fetchData()
+  if (currentNotebook.value) {
+    fetchData()
+  }
   updateMemoFormHeight() // コンポーネントがマウントされたら高さを更新
   window.addEventListener('resize', updateMemoFormHeight) // ウィンドウのリサイズに対応
 })
@@ -46,7 +64,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', updateMemoFormHeight) // クリーンアップ
 })
 const onAdd = (memo: Memo): void => {
-  // fetchData()
   memoList.value.push(memo)
   nextTick(updateMemoFormHeight) // メモが追加された後に高さを更新
   scrollToBottom() // メモが追加された後に一番下までスクロール
@@ -69,7 +86,7 @@ const onAdd = (memo: Memo): void => {
       </li>
     </transition-group>
   </div>
-  <MemoForm class="memo-form" @add="onAdd" />
+  <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" />
 </template>
 
 <style lang="scss" scoped>

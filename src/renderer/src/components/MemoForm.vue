@@ -1,6 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Memo } from '@renderer/types'
+import { ref, watchEffect } from 'vue'
+import { Memo, Notebook } from '@renderer/types'
+import { useNotebookStore } from '@renderer/store/notebook'
+const store = useNotebookStore()
+const currentNotebook = ref<Notebook | null>(store.currentNotebook)
+
+// watch(
+//   () => store.currentNotebook,
+//   (newVal) => {
+//     currentNotebook.value = newVal
+//   }
+// )
+watchEffect(() => {
+  currentNotebook.value = store.currentNotebook
+})
 
 const memo_content = ref<string>('')
 type Emits = {
@@ -9,8 +22,12 @@ type Emits = {
 const emit = defineEmits<Emits>()
 const onAdd = async (): Promise<void> => {
   try {
+    if (!currentNotebook.value) {
+      alert('ノートブックを選択してください')
+      return
+    }
     /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.insertData(memo_content.value)
+    await window.dbOp.insertMemo(memo_content.value, currentNotebook.value.id)
     /* @ts-ignore dbOpでエラーを出さない */
     const Memo: Memo = await window.dbOp.selectLastMemo()
     emit('add', Memo)

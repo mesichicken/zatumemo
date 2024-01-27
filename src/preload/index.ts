@@ -13,9 +13,14 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('api', api)
     contextBridge.exposeInMainWorld('dbOp', {
       createDb: async () => ipcRenderer.invoke('createDb'), // データベース作成
-      selectAll: async () => ipcRenderer.invoke('selectAll'), // データベース全件取得
+      selectAllMemo: async () => ipcRenderer.invoke('selectAllMemo'), // メモ全件取得
+      selectMemo: async (notebook_id) => ipcRenderer.invoke('selectMemo', notebook_id), // ノートブックIDを指定してメモを取得
+      selectAllNotebook: async () => ipcRenderer.invoke('selectAllNotebook'), // ノートブック全件取得
       selectLastMemo: async () => ipcRenderer.invoke('selectLastMemo'), // 最後に挿入したメモを取得
-      insertData: async (memoText) => ipcRenderer.invoke('insertData', memoText) // データベースにデータを追加
+      selectLastNotebook: async () => ipcRenderer.invoke('selectLastNotebook'), // 最後に挿入したノートブックを取得
+      insertMemo: async (memoText, notebook_id) =>
+        ipcRenderer.invoke('insertMemo', memoText, notebook_id), // データベースにMemoを追加
+      insertNotebook: async (notebookName) => ipcRenderer.invoke('insertNotebook', notebookName) // データベースにNotebookを追加
     })
   } catch (error) {
     console.error(error)

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import MemoChannel from './components/MemoChannel.vue'
+import NotebookList from './components/NotebookList.vue'
 import MemoLists from './components/MemoLists.vue'
 </script>
 
 <template>
   <main>
     <div class="flex">
-      <MemoChannel />
+      <NotebookList />
       <MemoLists />
     </div>
   </main>

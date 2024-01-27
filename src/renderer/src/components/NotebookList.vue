@@ -5,7 +5,7 @@ import { useNotebookStore } from '@renderer/store/notebook'
 const notebookStore = useNotebookStore()
 const notebooks = ref<Notebook[]>([])
 const notebook_name = ref<string>('')
-const selectedNotebookId = ref<number | null>(1)
+const selectedNotebookId = ref<number | null>(null)
 notebooks.value = notebookStore.notebooks
 
 const selectedNotebookIdValue = computed(() => selectedNotebookId.value)
@@ -16,6 +16,7 @@ const fetchData = async () => {
     const data = await window.dbOp.selectAllNotebook()
     notebookStore.setNotebooks(data)
     notebooks.value = notebookStore.notebooks
+    setCurrentNotebook(notebooks.value[0])
   } catch (error) {
     console.error('Error fetching data:', error)
     alert('ノートブックの取得に失敗しました')
@@ -38,7 +39,7 @@ const onAdd = async (): Promise<void> => {
     /* @ts-ignore dbOpでエラーを出さない */
     const notebook: Notebook = await window.dbOp.selectLastNotebook()
     notebookStore.addNotebook(notebook)
-    notebookStore.setCurrentNotebook(notebook)
+    setCurrentNotebook(notebook)
   } catch (error) {
     console.error(error)
     alert('ノートブック追加時にエラーが発生しました')
@@ -56,7 +57,6 @@ const toggleModal = () => {
 const setCurrentNotebook = (notebook: Notebook) => {
   notebookStore.setCurrentNotebook(notebook)
   selectedNotebookId.value = notebook.id
-  console.log(notebookStore.currentNotebook)
 }
 </script>
 

@@ -13,7 +13,6 @@ const memoList = ref<Memo[]>([])
 
 watchEffect(() => {
   currentNotebook.value = store.currentNotebook
-  console.log('!!!!!currentNotebook changed', currentNotebook.value)
   if (currentNotebook.value) {
     fetchData()
   } else {

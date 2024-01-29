@@ -55,6 +55,7 @@ const toggleModal = () => {
 }
 
 const setCurrentNotebook = (notebook: Notebook) => {
+  if (!notebook) return
   notebookStore.setCurrentNotebook(notebook)
   selectedNotebookId.value = notebook.id
 }

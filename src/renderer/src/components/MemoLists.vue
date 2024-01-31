@@ -79,7 +79,7 @@ const onAdd = (memo: Memo): void => {
       <li
         v-for="(memo, index) in memoList"
         :key="index"
-        class="container px-1 py-2 border-b-2 border-gray-500"
+        class="container px-1 py-2 border-b-2 border-gray-500 hover:bg-gray-600"
       >
         <MemoCard :memo="memo" />
       </li>

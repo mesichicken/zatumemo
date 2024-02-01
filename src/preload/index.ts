@@ -20,7 +20,8 @@ if (process.contextIsolated) {
       selectLastNotebook: async () => ipcRenderer.invoke('selectLastNotebook'), // 最後に挿入したノートブックを取得
       insertMemo: async (memoText, notebook_id) =>
         ipcRenderer.invoke('insertMemo', memoText, notebook_id), // データベースにMemoを追加
-      insertNotebook: async (notebookName) => ipcRenderer.invoke('insertNotebook', notebookName) // データベースにNotebookを追加
+      insertNotebook: async (notebookName) => ipcRenderer.invoke('insertNotebook', notebookName), // データベースにNotebookを追加
+      deleteMemo: async (id) => ipcRenderer.invoke('deleteMemo', id) // データベースからMemoを削除
     })
   } catch (error) {
     console.error(error)

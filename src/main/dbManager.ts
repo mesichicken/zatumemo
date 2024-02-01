@@ -98,7 +98,7 @@ export function dbQueryManager(db) {
       })
   )
 
-  // データ挿入
+  // memoデータ挿入
   ipcMain.handle(
     'insertMemo',
     (_, memoText, notebook_id) =>
@@ -115,6 +115,7 @@ export function dbQueryManager(db) {
       })
   )
 
+  // notebookデータ挿入
   ipcMain.handle(
     'insertNotebook',
     (_, notebookName) =>
@@ -127,6 +128,18 @@ export function dbQueryManager(db) {
             resolve()
           }
         )
+      })
+  )
+
+  // memoデータ削除
+  ipcMain.handle(
+    'deleteMemo',
+    (_, memoId) =>
+      new Promise<void>((resolve, reject) => {
+        db.run('DELETE FROM memo WHERE id = ?', memoId, (err) => {
+          if (err) reject(err)
+          resolve()
+        })
       })
   )
 }

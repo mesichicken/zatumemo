@@ -67,6 +67,42 @@ const onAdd = (memo: Memo): void => {
   nextTick(updateMemoFormHeight) // メモが追加された後に高さを更新
   scrollToBottom() // メモが追加された後に一番下までスクロール
 }
+
+const showPopup = ref(false)
+const popupPosition = ref({ x: 0, y: 0 })
+const popupMemoId = ref(0)
+
+const onRightClick = (event: MouseEvent, memoId: number) => {
+  // closePopup()
+  event.preventDefault()
+  showPopup.value = true
+  popupPosition.value = { x: event.clientX, y: event.clientY }
+  popupMemoId.value = memoId
+  // ポップアップを開いた後、ドキュメント全体のクリックをリッスンする
+  document.addEventListener('click', closePopupOnDocumentClick, { once: true })
+}
+
+const closePopupOnDocumentClick = () => {
+  showPopup.value = false
+  // イベントリスナーを削除する必要はない（{ once: true } で自動的に削除される）
+}
+
+// コンポーネントがアンマウントされる前にイベントリスナーを確実に削除
+onBeforeUnmount(() => {
+  document.removeEventListener('click', closePopupOnDocumentClick)
+})
+
+const deleteMemo = async () => {
+  try {
+    /* @ts-ignore dbOpでエラーを出さない */
+    await window.dbOp.deleteMemo(popupMemoId.value)
+    memoList.value = memoList.value.filter((memo) => memo.id !== popupMemoId.value)
+    showPopup.value = false
+  } catch (error) {
+    console.error('Error deleting memo:', error)
+    alert('メモの削除に失敗しました')
+  }
+}
 </script>
 
 <template>
@@ -80,10 +116,18 @@ const onAdd = (memo: Memo): void => {
         v-for="(memo, index) in memoList"
         :key="index"
         class="container px-1 py-2 border-b-2 border-gray-500 hover:bg-gray-600"
+        @contextmenu="(event) => onRightClick(event, memo.id)"
       >
         <MemoCard :memo="memo" />
       </li>
     </transition-group>
+    <div
+      v-if="showPopup"
+      class="bg-gray-600 border border-gray-300 shadow-lg rounded-lg py-4"
+      :style="{ position: 'fixed', top: `${popupPosition.y}px`, left: `${popupPosition.x}px` }"
+    >
+      <p @click="deleteMemo" class="text-red-500 cursor-pointer px-4 hover:bg-gray-500">削除</p>
+    </div>
   </div>
   <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" />
 </template>

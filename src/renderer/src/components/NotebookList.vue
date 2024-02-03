@@ -68,7 +68,7 @@ const setCurrentNotebook = (notebook: Notebook) => {
     </h1>
     <template v-for="notebook in notebooks" :key="notebook.id">
       <h2
-        class="text-sm font-normal py-1 text-center rounded cursor-pointer hover:bg-gray-500"
+        class="text-sm font-normal px-2 py-1 rounded cursor-pointer hover:bg-gray-500"
         :class="{
           'bg-blue-500': notebook.id === selectedNotebookIdValue
         }"
@@ -78,7 +78,7 @@ const setCurrentNotebook = (notebook: Notebook) => {
       </h2>
     </template>
     <h2
-      class="text-xs text-orange-500 font-normal py-2 text-center rounded cursor-pointer hover:bg-gray-500"
+      class="text-xs text-orange-500 font-normal p-2 rounded cursor-pointer hover:bg-gray-500"
       @click="makeNotebook"
     >
       ノートブックの作成+

@@ -62,6 +62,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateMemoFormHeight) // クリーンアップ
 })
+
 const onAdd = (memo: Memo): void => {
   memoList.value.push(memo)
   nextTick(updateMemoFormHeight) // メモが追加された後に高さを更新

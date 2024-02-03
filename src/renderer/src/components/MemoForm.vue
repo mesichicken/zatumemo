@@ -5,12 +5,6 @@ import { useNotebookStore } from '@renderer/store/notebook'
 const store = useNotebookStore()
 const currentNotebook = ref<Notebook | null>(store.currentNotebook)
 
-// watch(
-//   () => store.currentNotebook,
-//   (newVal) => {
-//     currentNotebook.value = newVal
-//   }
-// )
 watchEffect(() => {
   currentNotebook.value = store.currentNotebook
 })

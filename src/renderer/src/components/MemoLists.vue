@@ -79,19 +79,7 @@ const onRightClick = (event: MouseEvent, memoId: number) => {
   showPopup.value = true
   popupPosition.value = { x: event.clientX, y: event.clientY }
   popupMemoId.value = memoId
-  // ポップアップを開いた後、ドキュメント全体のクリックをリッスンする
-  document.addEventListener('click', closePopupOnDocumentClick, { once: true })
 }
-
-const closePopupOnDocumentClick = () => {
-  showPopup.value = false
-  // イベントリスナーを削除する必要はない（{ once: true } で自動的に削除される）
-}
-
-// コンポーネントがアンマウントされる前にイベントリスナーを確実に削除
-onBeforeUnmount(() => {
-  document.removeEventListener('click', closePopupOnDocumentClick)
-})
 
 const deleteMemoAction = async () => {
   try {
@@ -103,6 +91,10 @@ const deleteMemoAction = async () => {
     console.error('Error deleting memo:', error)
     alert('メモの削除に失敗しました')
   }
+}
+
+const visiblePopup = (visible: boolean) => {
+  showPopup.value = visible
 }
 </script>
 
@@ -124,7 +116,12 @@ const deleteMemoAction = async () => {
     </transition-group>
   </div>
   <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" />
-  <PopupMenu :visible="showPopup" :position="popupPosition" :on-select-action="deleteMemoAction" />
+  <PopupMenu
+    :visible="showPopup"
+    :position="popupPosition"
+    :on-select-action="deleteMemoAction"
+    @update:visible="visiblePopup"
+  />
 </template>
 
 <style lang="scss" scoped>

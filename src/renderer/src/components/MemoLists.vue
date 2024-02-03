@@ -3,6 +3,7 @@ import { onMounted, onBeforeUnmount, ref, nextTick, watchEffect } from 'vue'
 import { Memo, Notebook } from '@renderer/types'
 import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
+import PopupMenu from './PopupMenu.vue'
 import { useNotebookStore } from '@renderer/store/notebook'
 const store = useNotebookStore()
 const currentNotebook = ref<Notebook | null>(store.currentNotebook)
@@ -74,7 +75,6 @@ const popupPosition = ref({ x: 0, y: 0 })
 const popupMemoId = ref(0)
 
 const onRightClick = (event: MouseEvent, memoId: number) => {
-  // closePopup()
   event.preventDefault()
   showPopup.value = true
   popupPosition.value = { x: event.clientX, y: event.clientY }
@@ -93,7 +93,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', closePopupOnDocumentClick)
 })
 
-const deleteMemo = async () => {
+const deleteMemoAction = async () => {
   try {
     /* @ts-ignore dbOpでエラーを出さない */
     await window.dbOp.deleteMemo(popupMemoId.value)
@@ -122,15 +122,9 @@ const deleteMemo = async () => {
         <MemoCard :memo="memo" />
       </li>
     </transition-group>
-    <div
-      v-if="showPopup"
-      class="bg-gray-600 border border-gray-300 shadow-lg rounded-lg py-4"
-      :style="{ position: 'fixed', top: `${popupPosition.y}px`, left: `${popupPosition.x}px` }"
-    >
-      <p @click="deleteMemo" class="text-red-500 cursor-pointer px-4 hover:bg-gray-500">削除</p>
-    </div>
   </div>
   <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" />
+  <PopupMenu :visible="showPopup" :position="popupPosition" :on-select-action="deleteMemoAction" />
 </template>
 
 <style lang="scss" scoped>

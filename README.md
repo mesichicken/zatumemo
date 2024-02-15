@@ -1,4 +1,5 @@
 # zatumemo
+
 slackの個人チャットのように雑にメモを取ることができるアプリを現在開発中
 
 An Electron application with Vue and TypeScript

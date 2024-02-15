@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
+import PopupMenu from './PopupMenu.vue'
 const notebookStore = useNotebookStore()
 const notebooks = ref<Notebook[]>([])
 const notebook_name = ref<string>('')
 const selectedNotebookId = ref<number | null>(null)
-notebooks.value = notebookStore.notebooks
+
+watch(
+  () => notebookStore.notebooks,
+  async (newVal) => {
+    notebooks.value = newVal
+  },
+  { immediate: true }
+)
 
 const selectedNotebookIdValue = computed(() => selectedNotebookId.value)
 
@@ -14,8 +22,7 @@ const fetchData = async () => {
   try {
     /* @ts-ignore dbOpでエラーを出さない */
     const data = await window.dbOp.selectAllNotebook()
-    notebookStore.setNotebooks(data)
-    notebooks.value = notebookStore.notebooks
+    await notebookStore.setNotebooks(data)
     setCurrentNotebook(notebooks.value[0])
   } catch (error) {
     console.error('Error fetching data:', error)
@@ -55,9 +62,38 @@ const toggleModal = () => {
 }
 
 const setCurrentNotebook = (notebook: Notebook) => {
+  console.log('setCurrentNotebook', notebook)
   if (!notebook) return
   notebookStore.setCurrentNotebook(notebook)
   selectedNotebookId.value = notebook.id
+}
+
+const showPopup = ref<boolean>(false)
+const popupPosition = ref({ x: 0, y: 0 })
+const popupNotebookId = ref(0)
+
+const onRightClick = (event: MouseEvent, id: number) => {
+  event.preventDefault()
+  showPopup.value = true
+  popupPosition.value = { x: event.clientX, y: event.clientY }
+  popupNotebookId.value = id
+}
+
+const deleteNotebookAction = async () => {
+  try {
+    /* @ts-ignore dbOpでエラーを出さない */
+    await window.dbOp.deleteNotebook(popupNotebookId.value)
+    notebookStore.deleteNotebook(popupNotebookId.value)
+    showPopup.value = false
+    setCurrentNotebook(notebooks.value[0])
+  } catch (error) {
+    console.error('Error deleting notebook:', error)
+    alert('ノートブックの削除に失敗しました')
+  }
+}
+
+const visiblePopup = (visible: boolean) => {
+  showPopup.value = visible
 }
 </script>
 
@@ -73,6 +109,7 @@ const setCurrentNotebook = (notebook: Notebook) => {
           'bg-blue-500': notebook.id === selectedNotebookIdValue
         }"
         @click="setCurrentNotebook(notebook)"
+        @contextmenu="(event) => onRightClick(event, notebook.id)"
       >
         {{ notebook.name }}
       </h2>
@@ -101,6 +138,12 @@ const setCurrentNotebook = (notebook: Notebook) => {
       </form>
     </div>
   </div>
+  <PopupMenu
+    :visible="showPopup"
+    :position="popupPosition"
+    :on-select-action="deleteNotebookAction"
+    @update:visible="visiblePopup"
+  />
 </template>
 
 <style lang="scss" scoped>

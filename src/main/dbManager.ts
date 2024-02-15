@@ -142,4 +142,19 @@ export function dbQueryManager(db) {
         })
       })
   )
+
+  // notebookデータ削除
+  ipcMain.handle(
+    'deleteNotebook',
+    (_, notebookId) =>
+      new Promise<void>((resolve, reject) => {
+        db.run('DELETE FROM notebook WHERE id = ?', notebookId, (err) => {
+          if (err) reject(err)
+          db.run('DELETE FROM memo WHERE notebook_id = ?', notebookId, (err) => {
+            if (err) reject(err)
+            resolve()
+          })
+        })
+      })
+  )
 }

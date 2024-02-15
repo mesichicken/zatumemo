@@ -15,6 +15,9 @@ export const useNotebookStore = defineStore('notebook', {
     },
     setCurrentNotebook(notebook: Notebook) {
       this.currentNotebook = notebook
+    },
+    deleteNotebook(notebookId: number) {
+      this.notebooks = this.notebooks.filter((notebook) => notebook.id !== notebookId)
     }
   }
 })

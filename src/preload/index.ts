@@ -21,7 +21,8 @@ if (process.contextIsolated) {
       insertMemo: async (memoText, notebook_id) =>
         ipcRenderer.invoke('insertMemo', memoText, notebook_id), // データベースにMemoを追加
       insertNotebook: async (notebookName) => ipcRenderer.invoke('insertNotebook', notebookName), // データベースにNotebookを追加
-      deleteMemo: async (id) => ipcRenderer.invoke('deleteMemo', id) // データベースからMemoを削除
+      deleteMemo: async (id) => ipcRenderer.invoke('deleteMemo', id), // データベースからMemoを削除
+      deleteNotebook: async (id) => ipcRenderer.invoke('deleteNotebook', id) // データベースからNotebookを削除
     })
   } catch (error) {
     console.error(error)

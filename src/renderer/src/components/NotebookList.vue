@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import PopupMenu from './PopupMenu.vue'
@@ -60,6 +60,15 @@ const showModal = ref<boolean>(false)
 const toggleModal = () => {
   showModal.value = !showModal.value
 }
+
+watch(showModal, async (newVal) => {
+  if (newVal) {
+    await nextTick() // コンポーネントの更新が完了するのを待つ
+    const input = document.getElementById('notebook-name')
+    input?.focus()
+  }
+
+})
 
 const setCurrentNotebook = (notebook: Notebook) => {
   console.log('setCurrentNotebook', notebook)

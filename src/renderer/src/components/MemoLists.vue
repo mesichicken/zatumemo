@@ -104,7 +104,7 @@ const visiblePopup = (visible: boolean) => {
     class="memo-lists scrollable-content bg-gray-700 text-gray-50"
     :style="{ height: `calc(100vh - ${memoFormHeight}px)` }"
   >
-    <transition-group name="memo" tag="ul">
+    <ul>
       <li
         v-for="(memo, index) in memoList"
         :key="index"
@@ -113,7 +113,7 @@ const visiblePopup = (visible: boolean) => {
       >
         <MemoCard :memo="memo" />
       </li>
-    </transition-group>
+    </ul>
   </div>
   <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" />
   <PopupMenu
@@ -153,16 +153,5 @@ const visiblePopup = (visible: boolean) => {
 /* スクロールバーのつまみがホバーされたときのスタイル */
 .scrollable-content::-webkit-scrollbar-thumb:hover {
   background-color: #a0a0a0; /* ホバー時のつまみの色 */
-}
-
-/* トランジションのスタイル */
-.memo-enter-active,
-.memo-leave-active {
-  transition: opacity 0.5s;
-}
-
-.memo-enter,
-.memo-leave-to {
-  opacity: 0;
 }
 </style>

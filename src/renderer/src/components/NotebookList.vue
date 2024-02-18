@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import PopupMenu from './PopupMenu.vue'
+import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
 const notebookStore = useNotebookStore()
 const notebooks = ref<Notebook[]>([])
 const notebook_name = ref<string>('')
@@ -67,7 +68,6 @@ watch(showModal, async (newVal) => {
     const input = document.getElementById('notebook-name')
     input?.focus()
   }
-
 })
 
 const setCurrentNotebook = (notebook: Notebook) => {
@@ -77,23 +77,23 @@ const setCurrentNotebook = (notebook: Notebook) => {
   selectedNotebookId.value = notebook.id
 }
 
-const showPopup = ref<boolean>(false)
-const popupPosition = ref({ x: 0, y: 0 })
-const popupNotebookId = ref(0)
-
-const onRightClick = (event: MouseEvent, id: number) => {
-  event.preventDefault()
-  showPopup.value = true
-  popupPosition.value = { x: event.clientX, y: event.clientY }
-  popupNotebookId.value = id
-}
+const {
+  showPopup,
+  popupPosition,
+  popupId: popupNotebookId,
+  onRightClick,
+  closePopup
+} = useRightClickPopup()
 
 const deleteNotebookAction = async () => {
   try {
+    if (!popupNotebookId.value) {
+      throw new Error('Invalid notebook id')
+    }
     /* @ts-ignore dbOpでエラーを出さない */
     await window.dbOp.deleteNotebook(popupNotebookId.value)
     notebookStore.deleteNotebook(popupNotebookId.value)
-    showPopup.value = false
+    closePopup()
     setCurrentNotebook(notebooks.value[0])
   } catch (error) {
     console.error('Error deleting notebook:', error)

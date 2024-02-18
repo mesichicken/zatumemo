@@ -5,6 +5,7 @@ import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
 import PopupMenu from './PopupMenu.vue'
 import { useNotebookStore } from '@renderer/store/notebook'
+import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
 const store = useNotebookStore()
 const currentNotebook = ref<Notebook | null>(store.currentNotebook)
 
@@ -70,23 +71,23 @@ const onAdd = (memo: Memo): void => {
   scrollToBottom() // メモが追加された後に一番下までスクロール
 }
 
-const showPopup = ref(false)
-const popupPosition = ref({ x: 0, y: 0 })
-const popupMemoId = ref(0)
-
-const onRightClick = (event: MouseEvent, memoId: number) => {
-  event.preventDefault()
-  showPopup.value = true
-  popupPosition.value = { x: event.clientX, y: event.clientY }
-  popupMemoId.value = memoId
-}
+const {
+  showPopup,
+  popupPosition,
+  popupId: popupMemoId,
+  onRightClick,
+  closePopup
+} = useRightClickPopup()
 
 const deleteMemoAction = async () => {
   try {
+    if (!popupMemoId.value) {
+      throw new Error('Invalid memo id')
+    }
     /* @ts-ignore dbOpでエラーを出さない */
     await window.dbOp.deleteMemo(popupMemoId.value)
     memoList.value = memoList.value.filter((memo) => memo.id !== popupMemoId.value)
-    showPopup.value = false
+    closePopup()
   } catch (error) {
     console.error('Error deleting memo:', error)
     alert('メモの削除に失敗しました')

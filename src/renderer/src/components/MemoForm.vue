@@ -20,6 +20,9 @@ const onAdd = async (): Promise<void> => {
       alert('ノートブックを選択してください')
       return
     }
+    if (!memo_content.value) {
+      return
+    }
     /* @ts-ignore dbOpでエラーを出さない */
     await window.dbOp.insertMemo(memo_content.value, currentNotebook.value.id)
     /* @ts-ignore dbOpでエラーを出さない */
@@ -83,13 +86,14 @@ const onAdd = async (): Promise<void> => {
           </div>
           <button
             type="submit"
-            class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
+            class="inline-flex justify-center p-2 text-blue-600 rounded-full"
+            :class="memo_content ? 'cursor-pointer hover:bg-gray-600' : 'cursor-default'"
           >
             <svg
               class="w-5 h-5 rotate-90 rtl:-rotate-90"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
+              :fill="memo_content ? 'currentColor' : 'grey'"
               viewBox="0 0 18 20"
             >
               <path

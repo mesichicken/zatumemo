@@ -21,7 +21,7 @@ const formatDate = (date: Date): string => {
 <template>
   <div>
     <h3>{{ formatDate(new Date(props.memo.created_at)) }}</h3>
-    <p class="memo-content">{{ props.memo.content }}</p>
+    <p v-html="props.memo.content"></p>
   </div>
 </template>
 

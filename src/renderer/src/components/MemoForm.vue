@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { Memo, Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 const store = useNotebookStore()
 const currentNotebook = ref<Notebook | null>(store.currentNotebook)
+const quillEditorRef = ref()
 
 watchEffect(() => {
   currentNotebook.value = store.currentNotebook
 })
 
 const memo_content = ref<string>('')
+const isMessageSendable = computed(() => {
+  return memo_content.value && memo_content.value != '<p><br></p>'
+})
 type Emits = {
   (event: 'add', memo: Memo): void
 }
@@ -20,7 +26,7 @@ const onAdd = async (): Promise<void> => {
       alert('ノートブックを選択してください')
       return
     }
-    if (!memo_content.value) {
+    if (!isMessageSendable.value) {
       return
     }
     /* @ts-ignore dbOpでエラーを出さない */
@@ -28,7 +34,7 @@ const onAdd = async (): Promise<void> => {
     /* @ts-ignore dbOpでエラーを出さない */
     const Memo: Memo = await window.dbOp.selectLastMemo()
     emit('add', Memo)
-    memo_content.value = ''
+    quillEditorRef.value.setHTML('')
   } catch (error) {
     console.error(error)
     alert('メモ追加時にエラーが発生しました')
@@ -38,17 +44,16 @@ const onAdd = async (): Promise<void> => {
 
 <template>
   <div class="absolute bottom-0 left-1/5 memo-form">
-    <form class="flex justify-center flex-wrap" @submit.prevent="onAdd">
+    <form @submit.prevent="onAdd">
       <label for="chat" class="sr-only">メモを入力</label>
-      <div class="flex items-center flex-wrap px-3 py-2 bg-gray-50 dark:bg-gray-700 w-full">
-        <textarea
-          id="chat"
-          v-model="memo_content"
-          rows="1"
-          class="block p-2.5 w-full text-sm text-gray-900 rounded-lg border bg-gray-800 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-          placeholder="メモを入力"
-          @keydown.enter.ctrl="onAdd"
-        ></textarea>
+      <div class="px-3 py-2 bg-gray-700 w-full">
+        <QuillEditor
+          ref="quillEditorRef"
+          v-model:content="memo_content"
+          theme="bubble"
+          class="block p-2.5 w-full text-sm rounded-lg border bg-gray-800 border-gray-600 text-white"
+          contentType="html"
+        />
         <div class="flex justify-between w-full">
           <div>
             <button
@@ -87,13 +92,13 @@ const onAdd = async (): Promise<void> => {
           <button
             type="submit"
             class="inline-flex justify-center p-2 text-blue-600 rounded-full"
-            :class="memo_content ? 'cursor-pointer hover:bg-gray-600' : 'cursor-default'"
+            :class="isMessageSendable ? 'cursor-pointer hover:bg-gray-600' : 'cursor-default'"
           >
             <svg
               class="w-5 h-5 rotate-90 rtl:-rotate-90"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
-              :fill="memo_content ? 'currentColor' : 'grey'"
+              :fill="isMessageSendable ? 'currentColor' : 'grey'"
               viewBox="0 0 18 20"
             >
               <path
@@ -112,12 +117,5 @@ const onAdd = async (): Promise<void> => {
 @import '../assets/scss/main.scss';
 .memo-form {
   width: calc(80%);
-}
-
-.memo-form textarea {
-  width: 100%;
-  height: 80px;
-  font-size: 16px;
-  font-weight: normal;
 }
 </style>

@@ -3,6 +3,7 @@ import { computed, ref, watchEffect } from 'vue'
 import { Memo, Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 const store = useNotebookStore()
 const currentNotebook = ref<Notebook | null>(store.currentNotebook)
@@ -46,14 +47,45 @@ const onAdd = async (): Promise<void> => {
   <div class="absolute bottom-0 left-1/5 memo-form">
     <form @submit.prevent="onAdd">
       <label for="chat" class="sr-only">メモを入力</label>
-      <div class="px-3 py-2 bg-gray-700 w-full">
+      <div class="px-3 py-2 bg-gray-700 w-full text-white">
         <QuillEditor
           ref="quillEditorRef"
           v-model:content="memo_content"
-          theme="bubble"
-          class="block p-2.5 w-full text-sm rounded-lg border bg-gray-800 border-gray-600 text-white"
+          theme="snow"
+          toolbar="#quill-toolbar"
+          class="block p-2.5 w-full text-sm border bg-gray-800 border-gray-600 text-white"
           contentType="html"
-        />
+          placeholder="メモを入力"
+        >
+          <template #toolbar>
+            <div id="quill-toolbar" class="bg-gray-800">
+              <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-header" value="1"></button>
+                <button class="ql-header" value="2"></button>
+                <button class="ql-blockquote"></button>
+                <button class="ql-code-block"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-link"></button>
+                <button class="ql-image"></button>
+                <button class="ql-video"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-clean"></button>
+              </span>
+            </div>
+          </template>
+        </QuillEditor>
         <div class="flex justify-between w-full">
           <div>
             <button
@@ -113,9 +145,43 @@ const onAdd = async (): Promise<void> => {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../assets/scss/main.scss';
 .memo-form {
   width: calc(80%);
+}
+
+#quill-toolbar {
+}
+.ql-editor ul {
+  padding-left: 0em;
+}
+.ql-indent-1 {
+  padding-left: 2.5em !important;
+}
+.ql-indent-2 {
+  padding-left: 3rem !important;
+}
+.ql-indent-3 {
+  padding-left: 4rem !important;
+}
+.ql-indent-4 {
+  padding-left: 5rem !important;
+}
+.ql-indent-5 {
+  padding-left: 6rem !important;
+}
+.ql-indent-6 {
+  padding-left: 7rem !important;
+}
+.ql-indent-7 {
+  padding-left: 8rem !important;
+}
+.ql-indent-8 {
+  padding-left: 9rem !important;
+}
+.ql-editor.ql-blank::before {
+  color: #888;
+  padding-left: 10px;
 }
 </style>

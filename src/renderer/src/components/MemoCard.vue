@@ -49,6 +49,10 @@ const formatDate = (date: Date): string => {
     padding: 0.5em 1em;
     border-left: 2px solid #f2f2f2;
   }
+  a {
+    color: #1e90ff;
+    text-decoration: underline;
+  }
 
   blockquote::before {
     content: '\201C';

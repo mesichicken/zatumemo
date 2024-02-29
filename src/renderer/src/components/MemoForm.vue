@@ -13,7 +13,7 @@ watchEffect(() => {
   currentNotebook.value = store.currentNotebook
 })
 
-const emit = defineEmits(['formHeightChanged', 'add'])
+const emit = defineEmits(['formHeightChanged', 'scrollToBottom', 'add'])
 onMounted(() => {
   emit('formHeightChanged')
 })
@@ -46,6 +46,7 @@ const onAdd = async (): Promise<void> => {
 
 const onTextChange = () => {
   emit('formHeightChanged')
+  emit('scrollToBottom')
 }
 </script>
 
@@ -62,7 +63,7 @@ const onTextChange = () => {
           class="block p-2.5 w-full text-sm border bg-gray-800 border-gray-600 text-white"
           contentType="html"
           placeholder="メモを入力"
-          @textChange="onTextChange"
+          @text-change="onTextChange"
         >
           <template #toolbar>
             <div id="quill-toolbar" class="bg-gray-800">

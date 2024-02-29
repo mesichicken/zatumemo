@@ -31,11 +31,16 @@ const updateMemoFormHeight = () => {
 }
 
 const scrollToBottom = () => {
-  nextTick(() => {
-    if (memoListContainer.value) {
-      memoListContainer.value.scrollTop = memoListContainer.value.scrollHeight
-    }
-  })
+  if (memoListContainer.value) {
+    const container = memoListContainer.value
+    // スクロースが必要かどうか判断(一番下までスクロールされているか)
+    const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1
+    nextTick(() => {
+      if (isAtBottom) {
+        memoListContainer.value.scrollTop = memoListContainer.value.scrollHeight
+      }
+    })
+  }
 }
 
 async function fetchData() {
@@ -120,6 +125,7 @@ const visiblePopup = (visible: boolean) => {
     class="memo-form"
     @add="onAdd"
     @form-height-changed="updateMemoFormHeight"
+    @scroll-to-bottom="scrollToBottom"
   />
   <PopupMenu
     :visible="showPopup"

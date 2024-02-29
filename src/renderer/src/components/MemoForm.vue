@@ -86,7 +86,6 @@ const onTextChange = () => {
               <span class="ql-formats">
                 <button class="ql-link"></button>
                 <button class="ql-image"></button>
-                <!-- <button class="ql-video"></button> -->
               </span>
               <span class="ql-formats">
                 <button class="ql-clean"></button>

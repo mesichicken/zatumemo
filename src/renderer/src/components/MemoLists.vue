@@ -115,7 +115,12 @@ const visiblePopup = (visible: boolean) => {
       </li>
     </ul>
   </div>
-  <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" @formMounted="updateMemoFormHeight" />
+  <MemoForm
+    v-if="currentNotebook"
+    class="memo-form"
+    @add="onAdd"
+    @form-height-changed="updateMemoFormHeight"
+  />
   <PopupMenu
     :visible="showPopup"
     :position="popupPosition"

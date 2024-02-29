@@ -13,9 +13,9 @@ watchEffect(() => {
   currentNotebook.value = store.currentNotebook
 })
 
-const emit = defineEmits(['formMounted', 'add'])
+const emit = defineEmits(['formHeightChanged', 'add'])
 onMounted(() => {
-  emit('formMounted')
+  emit('formHeightChanged')
 })
 
 const memo_content = ref<string>('')
@@ -43,6 +43,10 @@ const onAdd = async (): Promise<void> => {
     alert('メモ追加時にエラーが発生しました')
   }
 }
+
+const onTextChange = () => {
+  emit('formHeightChanged')
+}
 </script>
 
 <template>
@@ -58,6 +62,7 @@ const onAdd = async (): Promise<void> => {
           class="block p-2.5 w-full text-sm border bg-gray-800 border-gray-600 text-white"
           contentType="html"
           placeholder="メモを入力"
+          @textChange="onTextChange"
         >
           <template #toolbar>
             <div id="quill-toolbar" class="bg-gray-800">

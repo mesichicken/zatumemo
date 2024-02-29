@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { Memo, Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import { QuillEditor } from '@vueup/vue-quill'
@@ -13,14 +13,16 @@ watchEffect(() => {
   currentNotebook.value = store.currentNotebook
 })
 
+const emit = defineEmits(['formMounted', 'add'])
+onMounted(() => {
+  emit('formMounted')
+})
+
 const memo_content = ref<string>('')
 const isMessageSendable = computed(() => {
   return memo_content.value && memo_content.value != '<p><br></p>'
 })
-type Emits = {
-  (event: 'add', memo: Memo): void
-}
-const emit = defineEmits<Emits>()
+
 const onAdd = async (): Promise<void> => {
   try {
     if (!currentNotebook.value) {

@@ -57,7 +57,6 @@ onMounted(async () => {
   if (currentNotebook.value) {
     fetchData()
   }
-  updateMemoFormHeight() // コンポーネントがマウントされたら高さを更新
   window.addEventListener('resize', updateMemoFormHeight) // ウィンドウのリサイズに対応
 })
 
@@ -116,7 +115,7 @@ const visiblePopup = (visible: boolean) => {
       </li>
     </ul>
   </div>
-  <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" />
+  <MemoForm v-if="currentNotebook" class="memo-form" @add="onAdd" @formMounted="updateMemoFormHeight" />
   <PopupMenu
     :visible="showPopup"
     :position="popupPosition"

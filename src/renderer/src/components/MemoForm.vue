@@ -60,13 +60,13 @@ const onTextChange = () => {
           v-model:content="memo_content"
           theme="snow"
           toolbar="#quill-toolbar"
-          class="block p-2.5 w-full text-sm border bg-gray-800 border-gray-600 text-white"
+          class="block p-2.5 w-full text-sm border bg-gray-800 border-gray-600 text-white rounded-b-lg"
           contentType="html"
           placeholder="メモを入力"
           @text-change="onTextChange"
         >
           <template #toolbar>
-            <div id="quill-toolbar" class="bg-gray-800">
+            <div id="quill-toolbar" class="bg-gray-800 rounded-t-lg">
               <span class="ql-formats">
                 <button class="ql-bold"></button>
                 <button class="ql-italic"></button>

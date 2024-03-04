@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { Memo, Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import { QuillEditor } from '@vueup/vue-quill'
@@ -16,6 +16,15 @@ watchEffect(() => {
 const emit = defineEmits(['formHeightChanged', 'scrollToBottom', 'add'])
 onMounted(() => {
   emit('formHeightChanged')
+  document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.key === 'Enter') {
+      onAdd()
+    }
+  })
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onAdd);
 })
 
 const memo_content = ref<string>('')

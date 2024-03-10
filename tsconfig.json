@@ -6,5 +6,6 @@
     "module": "ES2020",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "types": ["vitest/globals"]
   }
 }

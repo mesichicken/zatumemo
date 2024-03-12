@@ -24,7 +24,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', onAdd);
+  document.removeEventListener('keydown', onAdd)
 })
 
 const memo_content = ref<string>('')

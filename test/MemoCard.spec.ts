@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import MemoCard from '@renderer/components/MemoCard.vue';
+import { describe, it, expect } from 'vitest'
+import { mount } from '@vue/test-utils'
+import MemoCard from '@renderer/components/MemoCard.vue'
 
 describe('MemoCard', () => {
   it('メモの詳細が正しく表示されるか確認', () => {

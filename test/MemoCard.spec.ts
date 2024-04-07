@@ -10,7 +10,7 @@ describe('MemoCard', () => {
       title: 'Test Memo Title',
       content: 'This is a test content.',
       created_at: new Date(2022, 0, 1, 14, 30).toISOString() // ISO 8601 形式の日付文字列
-    };
+    }
 
     // MemoCard コンポーネントをマウントし、props にメモオブジェクトを渡す
     const wrapper = mount(MemoCard, {

@@ -70,7 +70,7 @@ const onTextChange = () => {
           theme="snow"
           toolbar="#quill-toolbar"
           class="block p-2.5 w-full text-sm border bg-gray-800 border-gray-600 text-white rounded-b-lg"
-          contentType="html"
+          content-type="html"
           placeholder="メモを入力"
           @text-change="onTextChange"
         >

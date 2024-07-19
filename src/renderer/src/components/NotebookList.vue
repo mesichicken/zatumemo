@@ -5,46 +5,34 @@ import { useNotebookStore } from '@renderer/store/notebook'
 import PopupMenu from './PopupMenu.vue'
 import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
 const notebookStore = useNotebookStore()
-const notebook_name = ref<string>('')
-const selectedNotebookId = ref<number | null>(null)
+const editingNotebookName = ref<string>('')
 
-const selectedNotebookIdValue = computed(() => selectedNotebookId.value)
-
-const fetchData = async () => {
+onMounted(async () => {
   try {
     /* @ts-ignore dbOpでエラーを出さない */
     const data = await window.dbOp.selectAllNotebook()
     await notebookStore.setNotebooks(data)
-    setCurrentNotebook(notebookStore.notebooks[0])
+    notebookStore.setCurrentNotebook(data[0])
   } catch (error) {
     console.error('Error fetching data:', error)
     alert('ノートブックの取得に失敗しました')
   }
-}
-
-onMounted(async () => {
-  fetchData()
 })
 
-const makeNotebook = () => {
-  toggleModal()
-}
-
-const onAdd = async (): Promise<void> => {
-  const name = notebook_name.value
+const onAddNotebook = async (): Promise<void> => {
   try {
     /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.insertNotebook(name)
+    await window.dbOp.insertNotebook(editingNotebookName.value)
     /* @ts-ignore dbOpでエラーを出さない */
     const notebook: Notebook = await window.dbOp.selectLastNotebook()
     notebookStore.addNotebook(notebook)
-    setCurrentNotebook(notebook)
+    notebookStore.setCurrentNotebook(notebook)
   } catch (error) {
     console.error(error)
     alert('ノートブック追加時にエラーが発生しました')
   }
 
-  notebook_name.value = ''
+  editingNotebookName.value = ''
   toggleModal()
 }
 
@@ -61,13 +49,6 @@ watch(showModal, async (newVal) => {
     input?.focus()
   }
 })
-
-const setCurrentNotebook = (notebook: Notebook) => {
-  console.log('setCurrentNotebook', notebook)
-  if (!notebook) return
-  notebookStore.setCurrentNotebook(notebook)
-  selectedNotebookId.value = notebook.id
-}
 
 const {
   showPopup,
@@ -86,7 +67,7 @@ const deleteNotebookAction = async () => {
     await window.dbOp.deleteNotebook(popupNotebookId.value)
     notebookStore.deleteNotebook(popupNotebookId.value)
     closePopup()
-    setCurrentNotebook(notebookStore.notebooks[0])
+    notebookStore.setCurrentNotebook(notebookStore.notebooks[0])
   } catch (error) {
     console.error('Error deleting notebook:', error)
     alert('ノートブックの削除に失敗しました')
@@ -107,9 +88,9 @@ const visiblePopup = (visible: boolean) => {
       <h2
         class="text-sm font-normal px-2 py-1 rounded cursor-pointer hover:bg-gray-500"
         :class="{
-          'bg-blue-500': notebook.id === selectedNotebookIdValue
+          'bg-blue-500': notebook.id === notebookStore.currentNotebook?.id
         }"
-        @click="setCurrentNotebook(notebook)"
+        @click="notebookStore.setCurrentNotebook(notebook)"
         @contextmenu="(event) => onRightClick(event, notebook.id)"
       >
         {{ notebook.name }}
@@ -117,7 +98,7 @@ const visiblePopup = (visible: boolean) => {
     </template>
     <h2
       class="text-xs text-orange-500 font-normal p-2 rounded cursor-pointer hover:bg-gray-500"
-      @click="makeNotebook"
+      @click="toggleModal"
     >
       ノートブックの作成+
     </h2>
@@ -127,11 +108,11 @@ const visiblePopup = (visible: boolean) => {
     <div class="modal-content" @click.stop>
       <span class="close" @click="toggleModal">&times;</span>
       <h3 class="text-gray-50">ノートブックの作成</h3>
-      <form class="py-4" @submit.prevent="onAdd">
+      <form class="py-4" @submit.prevent="onAddNotebook">
         <label for="notebook-name" class="sr-only">ノートブック名</label>
         <input
           id="notebook-name"
-          v-model="notebook_name"
+          v-model="editingNotebookName"
           type="text"
           class="block p-2.5 w-full text-sm text-gray-900 rounded-lg border bg-gray-800 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
           placeholder="ノートブック名"

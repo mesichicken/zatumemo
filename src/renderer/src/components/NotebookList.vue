@@ -5,17 +5,8 @@ import { useNotebookStore } from '@renderer/store/notebook'
 import PopupMenu from './PopupMenu.vue'
 import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
 const notebookStore = useNotebookStore()
-const notebooks = ref<Notebook[]>([])
 const notebook_name = ref<string>('')
 const selectedNotebookId = ref<number | null>(null)
-
-watch(
-  () => notebookStore.notebooks,
-  async (newVal) => {
-    notebooks.value = newVal
-  },
-  { immediate: true }
-)
 
 const selectedNotebookIdValue = computed(() => selectedNotebookId.value)
 
@@ -24,7 +15,7 @@ const fetchData = async () => {
     /* @ts-ignore dbOpでエラーを出さない */
     const data = await window.dbOp.selectAllNotebook()
     await notebookStore.setNotebooks(data)
-    setCurrentNotebook(notebooks.value[0])
+    setCurrentNotebook(notebookStore.notebooks[0])
   } catch (error) {
     console.error('Error fetching data:', error)
     alert('ノートブックの取得に失敗しました')
@@ -62,6 +53,7 @@ const toggleModal = () => {
   showModal.value = !showModal.value
 }
 
+// モーダルが表示されたらinputにフォーカスを当てる
 watch(showModal, async (newVal) => {
   if (newVal) {
     await nextTick() // コンポーネントの更新が完了するのを待つ
@@ -94,7 +86,7 @@ const deleteNotebookAction = async () => {
     await window.dbOp.deleteNotebook(popupNotebookId.value)
     notebookStore.deleteNotebook(popupNotebookId.value)
     closePopup()
-    setCurrentNotebook(notebooks.value[0])
+    setCurrentNotebook(notebookStore.notebooks[0])
   } catch (error) {
     console.error('Error deleting notebook:', error)
     alert('ノートブックの削除に失敗しました')
@@ -111,7 +103,7 @@ const visiblePopup = (visible: boolean) => {
     <h1>
       <img src="../assets/images/zatumemo-white.svg" alt="zatumemo" />
     </h1>
-    <template v-for="notebook in notebooks" :key="notebook.id">
+    <template v-for="notebook in notebookStore.notebooks" :key="notebook.id">
       <h2
         class="text-sm font-normal px-2 py-1 rounded cursor-pointer hover:bg-gray-500"
         :class="{

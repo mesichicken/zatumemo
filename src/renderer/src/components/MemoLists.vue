@@ -31,7 +31,7 @@ const updateMemoFormHeight = () => {
 const scrollToBottom = () => {
   if (memoListContainer.value) {
     const container = memoListContainer.value
-    // スクロースが必要かどうか判断(一番下までスクロールされているか)
+    // スクロールが必要かどうか判断(一番下までスクロールされているか)
     const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1
     nextTick(() => {
       if (isAtBottom && memoListContainer.value) {
@@ -67,10 +67,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', updateMemoFormHeight) // クリーンアップ
 })
 
-const onAdd = (memo: Memo): void => {
-  memoList.value.push(memo)
-  nextTick(updateMemoFormHeight) // メモが追加された後に高さを更新
-  scrollToBottom() // メモが追加された後に一番下までスクロール
+const onAddMemo = (memo: Memo): void => {
+  memoList.value = [...memoList.value, memo]
+  nextTick(updateMemoFormHeight)
+  scrollToBottom()
 }
 
 const {
@@ -121,7 +121,7 @@ const visiblePopup = (visible: boolean) => {
   <MemoForm
     v-if="noteBookStore.currentNotebook"
     class="memo-form"
-    @add="onAdd"
+    @add="onAddMemo"
     @form-height-changed="updateMemoFormHeight"
     @scroll-to-bottom="scrollToBottom"
   />

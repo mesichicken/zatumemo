@@ -5,7 +5,7 @@ type Props = {
   memo: Memo
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const formatDate = (date: Date): string => {
   const year = date.getFullYear()
@@ -20,8 +20,8 @@ const formatDate = (date: Date): string => {
 
 <template>
   <div>
-    <h3 class="created-at">{{ formatDate(new Date(props.memo.created_at)) }}</h3>
-    <p class="memo-content" v-html="props.memo.content"></p>
+    <h3 class="created-at">{{ formatDate(new Date(memo.created_at)) }}</h3>
+    <p class="memo-content" v-html="memo.content"></p>
   </div>
 </template>
 

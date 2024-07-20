@@ -9,8 +9,8 @@ describe('MemoCard', () => {
       id: 1,
       title: 'Test Memo Title',
       content: 'This is a test content.',
-      created_at: new Date(2022, 0, 1, 14, 30), // ISO 8601 形式の日付文字列
-      updated_at: new Date(2022, 0, 1, 14, 30) // Add the updated_at property
+      created_at: new Date(2022, 0, 1, 14, 30),
+      updated_at: new Date(2022, 0, 1, 14, 30)
     }
 
     // MemoCard コンポーネントをマウントし、props にメモオブジェクトを渡す

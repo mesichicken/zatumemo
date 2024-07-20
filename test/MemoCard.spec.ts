@@ -6,10 +6,11 @@ describe('MemoCard', () => {
   it('メモの詳細が正しく表示されるか確認', () => {
     // テスト用のメモオブジェクトを作成
     const memo = {
-      id: '1',
+      id: 1,
       title: 'Test Memo Title',
       content: 'This is a test content.',
-      created_at: new Date(2022, 0, 1, 14, 30).toISOString() // ISO 8601 形式の日付文字列
+      created_at: new Date(2022, 0, 1, 14, 30), // ISO 8601 形式の日付文字列
+      updated_at: new Date(2022, 0, 1, 14, 30) // Add the updated_at property
     }
 
     // MemoCard コンポーネントをマウントし、props にメモオブジェクトを渡す

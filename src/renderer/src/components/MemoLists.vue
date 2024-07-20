@@ -1,22 +1,20 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, nextTick, watchEffect } from 'vue'
-import { Memo, Notebook } from '@renderer/types'
+import { Memo } from '@renderer/types'
 import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
 import PopupMenu from './PopupMenu.vue'
 import { useNotebookStore } from '@renderer/store/notebook'
 import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
-const store = useNotebookStore()
-const currentNotebook = ref<Notebook | null>(store.currentNotebook)
+const noteBookStore = useNotebookStore()
 
 const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
 const memoList = ref<Memo[]>([])
 
 watchEffect(() => {
-  currentNotebook.value = store.currentNotebook
-  if (currentNotebook.value) {
-    fetchData()
+  if (noteBookStore.currentNotebook) {
+    fetchMemoData()
   } else {
     memoList.value = []
   }
@@ -36,20 +34,20 @@ const scrollToBottom = () => {
     // スクロースが必要かどうか判断(一番下までスクロールされているか)
     const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1
     nextTick(() => {
-      if (isAtBottom) {
+      if (isAtBottom && memoListContainer.value) {
         memoListContainer.value.scrollTop = memoListContainer.value.scrollHeight
       }
     })
   }
 }
 
-async function fetchData() {
+async function fetchMemoData() {
   try {
-    if (!currentNotebook.value) {
+    if (!noteBookStore.currentNotebook) {
       return
     }
     /* @ts-ignore dbOpでエラーを出さない */
-    const data = await window.dbOp.selectMemo(currentNotebook.value.id)
+    const data = await window.dbOp.selectMemo(noteBookStore.currentNotebook.id)
     memoList.value = data
     console.log('data fetched:', data)
   } catch (error) {
@@ -59,8 +57,8 @@ async function fetchData() {
 }
 
 onMounted(async () => {
-  if (currentNotebook.value) {
-    fetchData()
+  if (noteBookStore.currentNotebook) {
+    fetchMemoData()
   }
   window.addEventListener('resize', updateMemoFormHeight) // ウィンドウのリサイズに対応
 })
@@ -121,7 +119,7 @@ const visiblePopup = (visible: boolean) => {
     </ul>
   </div>
   <MemoForm
-    v-if="currentNotebook"
+    v-if="noteBookStore.currentNotebook"
     class="memo-form"
     @add="onAdd"
     @form-height-changed="updateMemoFormHeight"

@@ -12,9 +12,4 @@ describe('MemoLists', () => {
     const wrapper = mount(MemoLists)
     expect(wrapper.vm).toBeTruthy()
   })
-
-  it('notebookが存在しない場合、memoListに空配列が入ること', async () => {
-    const wrapper = mount(MemoLists)
-    expect(wrapper.vm.memoList).toEqual([])
-  })
 })

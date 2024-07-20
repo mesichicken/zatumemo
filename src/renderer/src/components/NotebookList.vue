@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import PopupMenu from './PopupMenu.vue'
@@ -33,11 +33,11 @@ const onAddNotebook = async (): Promise<void> => {
   }
 
   editingNotebookName.value = ''
-  toggleModal()
+  toggleEditNotebookModal()
 }
 
 const showModal = ref<boolean>(false)
-const toggleModal = () => {
+const toggleEditNotebookModal = () => {
   showModal.value = !showModal.value
 }
 
@@ -98,15 +98,15 @@ const visiblePopup = (visible: boolean) => {
     </template>
     <h2
       class="text-xs text-orange-500 font-normal p-2 rounded cursor-pointer hover:bg-gray-500"
-      @click="toggleModal"
+      @click="toggleEditNotebookModal"
     >
       ノートブックの作成+
     </h2>
   </div>
 
-  <div v-if="showModal" class="modal" @click="toggleModal">
+  <div v-if="showModal" class="modal" @click="toggleEditNotebookModal">
     <div class="modal-content" @click.stop>
-      <span class="close" @click="toggleModal">&times;</span>
+      <span class="close" @click="toggleEditNotebookModal">&times;</span>
       <h3 class="text-gray-50">ノートブックの作成</h3>
       <form class="py-4" @submit.prevent="onAddNotebook">
         <label for="notebook-name" class="sr-only">ノートブック名</label>

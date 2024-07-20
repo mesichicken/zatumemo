@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onBeforeUnmount } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 
 type Position = {
   x: number
@@ -25,15 +25,6 @@ const props = defineProps({
 const visible = ref(props.visible)
 const position = ref<Position>(props.position || { x: 0, y: 0 })
 
-watchEffect(() => {
-  visible.value = props.visible
-  position.value = props.position || { x: 0, y: 0 }
-
-  if (visible.value) {
-    document.addEventListener('click', closePopupOnDocumentClick, { once: true })
-  }
-})
-
 type Emits = {
   (event: 'update:visible', visible: boolean): void
 }
@@ -45,6 +36,25 @@ const closePopupOnDocumentClick = () => {
   document.removeEventListener('click', closePopupOnDocumentClick)
   emit('update:visible', false)
 }
+
+watch(
+  () => props.visible,
+  (newVisible) => {
+    visible.value = newVisible
+    if (newVisible) {
+      document.addEventListener('click', closePopupOnDocumentClick, { once: true })
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => props.position,
+  (newPosition) => {
+    position.value = newPosition || { x: 0, y: 0 }
+  },
+  { immediate: true }
+)
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', closePopupOnDocumentClick)

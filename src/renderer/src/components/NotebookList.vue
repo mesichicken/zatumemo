@@ -1,67 +1,47 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import PopupMenu from './PopupMenu.vue'
 import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
 const notebookStore = useNotebookStore()
-const notebooks = ref<Notebook[]>([])
-const notebook_name = ref<string>('')
-const selectedNotebookId = ref<number | null>(null)
+const editingNotebookName = ref<string>('')
 
-watch(
-  () => notebookStore.notebooks,
-  async (newVal) => {
-    notebooks.value = newVal
-  },
-  { immediate: true }
-)
-
-const selectedNotebookIdValue = computed(() => selectedNotebookId.value)
-
-const fetchData = async () => {
+onMounted(async () => {
   try {
     /* @ts-ignore dbOpでエラーを出さない */
     const data = await window.dbOp.selectAllNotebook()
     await notebookStore.setNotebooks(data)
-    setCurrentNotebook(notebooks.value[0])
+    notebookStore.setCurrentNotebook(data[0])
   } catch (error) {
     console.error('Error fetching data:', error)
     alert('ノートブックの取得に失敗しました')
   }
-}
-
-onMounted(async () => {
-  fetchData()
 })
 
-const makeNotebook = () => {
-  toggleModal()
-}
-
-const onAdd = async (): Promise<void> => {
-  const name = notebook_name.value
+const onAddNotebook = async (): Promise<void> => {
   try {
     /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.insertNotebook(name)
+    await window.dbOp.insertNotebook(editingNotebookName.value)
     /* @ts-ignore dbOpでエラーを出さない */
     const notebook: Notebook = await window.dbOp.selectLastNotebook()
     notebookStore.addNotebook(notebook)
-    setCurrentNotebook(notebook)
+    notebookStore.setCurrentNotebook(notebook)
   } catch (error) {
     console.error(error)
     alert('ノートブック追加時にエラーが発生しました')
   }
 
-  notebook_name.value = ''
-  toggleModal()
+  editingNotebookName.value = ''
+  toggleEditNotebookModal()
 }
 
 const showModal = ref<boolean>(false)
-const toggleModal = () => {
+const toggleEditNotebookModal = () => {
   showModal.value = !showModal.value
 }
 
+// モーダルが表示されたらinputにフォーカスを当てる
 watch(showModal, async (newVal) => {
   if (newVal) {
     await nextTick() // コンポーネントの更新が完了するのを待つ
@@ -69,13 +49,6 @@ watch(showModal, async (newVal) => {
     input?.focus()
   }
 })
-
-const setCurrentNotebook = (notebook: Notebook) => {
-  console.log('setCurrentNotebook', notebook)
-  if (!notebook) return
-  notebookStore.setCurrentNotebook(notebook)
-  selectedNotebookId.value = notebook.id
-}
 
 const {
   showPopup,
@@ -94,7 +67,7 @@ const deleteNotebookAction = async () => {
     await window.dbOp.deleteNotebook(popupNotebookId.value)
     notebookStore.deleteNotebook(popupNotebookId.value)
     closePopup()
-    setCurrentNotebook(notebooks.value[0])
+    notebookStore.setCurrentNotebook(notebookStore.notebooks[0])
   } catch (error) {
     console.error('Error deleting notebook:', error)
     alert('ノートブックの削除に失敗しました')
@@ -111,13 +84,13 @@ const visiblePopup = (visible: boolean) => {
     <h1>
       <img src="../assets/images/zatumemo-white.svg" alt="zatumemo" />
     </h1>
-    <template v-for="notebook in notebooks" :key="notebook.id">
+    <template v-for="notebook in notebookStore.notebooks" :key="notebook.id">
       <h2
         class="text-sm font-normal px-2 py-1 rounded cursor-pointer hover:bg-gray-500"
         :class="{
-          'bg-blue-500': notebook.id === selectedNotebookIdValue
+          'bg-blue-500': notebook.id === notebookStore.currentNotebook?.id
         }"
-        @click="setCurrentNotebook(notebook)"
+        @click="notebookStore.setCurrentNotebook(notebook)"
         @contextmenu="(event) => onRightClick(event, notebook.id)"
       >
         {{ notebook.name }}
@@ -125,21 +98,21 @@ const visiblePopup = (visible: boolean) => {
     </template>
     <h2
       class="text-xs text-orange-500 font-normal p-2 rounded cursor-pointer hover:bg-gray-500"
-      @click="makeNotebook"
+      @click="toggleEditNotebookModal"
     >
       ノートブックの作成+
     </h2>
   </div>
 
-  <div v-if="showModal" class="modal" @click="toggleModal">
+  <div v-if="showModal" class="modal" @click="toggleEditNotebookModal">
     <div class="modal-content" @click.stop>
-      <span class="close" @click="toggleModal">&times;</span>
+      <span class="close" @click="toggleEditNotebookModal">&times;</span>
       <h3 class="text-gray-50">ノートブックの作成</h3>
-      <form class="py-4" @submit.prevent="onAdd">
+      <form class="py-4" @submit.prevent="onAddNotebook">
         <label for="notebook-name" class="sr-only">ノートブック名</label>
         <input
           id="notebook-name"
-          v-model="notebook_name"
+          v-model="editingNotebookName"
           type="text"
           class="block p-2.5 w-full text-sm text-gray-900 rounded-lg border bg-gray-800 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
           placeholder="ノートブック名"

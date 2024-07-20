@@ -41,7 +41,6 @@ type Emits = {
 const emit = defineEmits<Emits>()
 
 const closePopupOnDocumentClick = () => {
-  console.log('closePopupOnDocumentClick')
   visible.value = false
   document.removeEventListener('click', closePopupOnDocumentClick)
   emit('update:visible', false)

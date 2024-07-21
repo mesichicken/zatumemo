@@ -4,8 +4,3 @@ export type Memo = {
   created_at: Date
   updated_at: Date
 }
-
-export type Notebook = {
-  id: number
-  name: string
-}

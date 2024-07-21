@@ -12,6 +12,21 @@ const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
 const memoList = ref<Memo[]>([])
 
+const fetchMemoData = async (): Promise<void> => {
+  try {
+    if (!noteBookStore.currentNotebook) {
+      return
+    }
+    /* @ts-ignore dbOpでエラーを出さない */
+    const data = await window.dbOp.selectMemo(noteBookStore.currentNotebook.id)
+    memoList.value = data
+    console.log('data fetched:', data)
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    alert('メモの取得に失敗しました')
+  }
+}
+
 watchEffect(() => {
   if (noteBookStore.currentNotebook) {
     fetchMemoData()
@@ -38,21 +53,6 @@ const scrollToBottom = () => {
         memoListContainer.value.scrollTop = memoListContainer.value.scrollHeight
       }
     })
-  }
-}
-
-async function fetchMemoData() {
-  try {
-    if (!noteBookStore.currentNotebook) {
-      return
-    }
-    /* @ts-ignore dbOpでエラーを出さない */
-    const data = await window.dbOp.selectMemo(noteBookStore.currentNotebook.id)
-    memoList.value = data
-    console.log('data fetched:', data)
-  } catch (error) {
-    console.error('Error fetching data:', error)
-    alert('メモの取得に失敗しました')
   }
 }
 

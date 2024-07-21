@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue'
-import { Memo, Notebook } from '@renderer/types'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { Memo } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import '@vueup/vue-quill/dist/vue-quill.bubble.css'
-const store = useNotebookStore()
-const currentNotebook = ref<Notebook | null>(store.currentNotebook)
+const notebookStore = useNotebookStore()
 const quillEditorRef = ref()
-
-watchEffect(() => {
-  currentNotebook.value = store.currentNotebook
-})
 
 const emit = defineEmits(['formHeightChanged', 'scrollToBottom', 'add'])
 onMounted(() => {
@@ -34,7 +29,7 @@ const isMessageSendable = computed(() => {
 
 const onAdd = async (): Promise<void> => {
   try {
-    if (!currentNotebook.value) {
+    if (!notebookStore.currentNotebook) {
       alert('ノートブックを選択してください')
       return
     }
@@ -42,7 +37,7 @@ const onAdd = async (): Promise<void> => {
       return
     }
     /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.insertMemo(memo_content.value, currentNotebook.value.id)
+    await window.dbOp.insertMemo(memo_content.value, notebookStore.currentNotebook.id)
     /* @ts-ignore dbOpでエラーを出さない */
     const Memo: Memo = await window.dbOp.selectLastMemo()
     emit('add', Memo)

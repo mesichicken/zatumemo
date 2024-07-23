@@ -27,9 +27,23 @@ const fetchMemoData = async (): Promise<void> => {
   }
 }
 
-watchEffect(() => {
+const scrollToBottom = () => {
+  if (memoListContainer.value) {
+    const container = memoListContainer.value
+    // スクロールが必要かどうか判断(一番下までスクロールされているか)
+    const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1
+    nextTick(() => {
+      if (!isAtBottom && memoListContainer.value) {
+        memoListContainer.value.scrollTop = memoListContainer.value.scrollHeight
+      }
+    })
+  }
+}
+
+watchEffect(async () => {
   if (noteBookStore.currentNotebook) {
-    fetchMemoData()
+    await fetchMemoData()
+    scrollToBottom()
   } else {
     memoList.value = []
   }
@@ -40,19 +54,6 @@ const updateMemoFormHeight = () => {
   const memoFormElement = document.querySelector('.memo-form') as HTMLElement
   if (memoFormElement) {
     memoFormHeight.value = memoFormElement.offsetHeight
-  }
-}
-
-const scrollToBottom = () => {
-  if (memoListContainer.value) {
-    const container = memoListContainer.value
-    // スクロールが必要かどうか判断(一番下までスクロールされているか)
-    const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1
-    nextTick(() => {
-      if (isAtBottom && memoListContainer.value) {
-        memoListContainer.value.scrollTop = memoListContainer.value.scrollHeight
-      }
-    })
   }
 }
 

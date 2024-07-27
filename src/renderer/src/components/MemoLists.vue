@@ -20,7 +20,6 @@ const fetchMemoData = async (): Promise<void> => {
     /* @ts-ignore dbOpでエラーを出さない */
     const data = await window.dbOp.selectMemo(noteBookStore.currentNotebook.id)
     memoList.value = data
-    console.log('data fetched:', data)
   } catch (error) {
     console.error('Error fetching data:', error)
     alert('メモの取得に失敗しました')

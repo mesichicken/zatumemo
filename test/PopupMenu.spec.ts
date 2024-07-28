@@ -40,17 +40,17 @@ describe('PopupMenu', () => {
     expect(popupElement.style.top).toBe('200px')
   })
 
-  it('削除ボタンをクリックするとonSelectActionが呼ばれること', async () => {
-    const onSelectAction = vi.fn()
+  it('削除ボタンをクリックするとonDeleteActionが呼ばれること', async () => {
+    const onDeleteAction = vi.fn()
     const wrapper = mount(PopupMenu, {
       props: {
         visible: true,
         position: { x: 100, y: 100 },
-        onSelectAction
+        onDeleteAction
       }
     })
     await wrapper.find('.text-red-500').trigger('click')
-    expect(onSelectAction).toHaveBeenCalledTimes(1)
+    expect(onDeleteAction).toHaveBeenCalledTimes(1)
   })
 
   it('ドキュメントをクリックするとポップアップが閉じること', async () => {

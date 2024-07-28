@@ -128,7 +128,7 @@ const visiblePopup = (visible: boolean) => {
   <PopupMenu
     :visible="showPopup"
     :position="popupPosition"
-    :on-select-action="deleteMemoAction"
+    :on-delete-action="deleteMemoAction"
     @update:visible="visiblePopup"
   />
 </template>

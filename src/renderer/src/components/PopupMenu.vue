@@ -4,7 +4,7 @@
     class="bg-gray-600 border border-gray-300 shadow-lg rounded-lg py-4"
     :style="{ position: 'fixed', top: `${position.y}px`, left: `${position.x}px` }"
   >
-    <p class="text-red-500 cursor-pointer px-4 hover:bg-gray-500" @click="onSelect">削除</p>
+    <p class="text-red-500 cursor-pointer px-4 hover:bg-gray-500" @click="onDelete">削除</p>
   </div>
 </template>
 
@@ -19,7 +19,7 @@ type Position = {
 const props = defineProps({
   visible: Boolean,
   position: Object as () => Position,
-  onSelectAction: Function
+  onDeleteAction: Function
 })
 
 const visible = ref(props.visible)
@@ -60,11 +60,11 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', closePopupOnDocumentClick)
 })
 
-const onSelect = () => {
-  if (typeof props.onSelectAction === 'function') {
-    props.onSelectAction()
+const onDelete = () => {
+  if (typeof props.onDeleteAction === 'function') {
+    props.onDeleteAction()
   } else {
-    console.error('onSelectAction is not a function')
+    console.error('onDeleteAction is not a function')
   }
 }
 </script>

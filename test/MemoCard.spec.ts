@@ -19,7 +19,7 @@ describe('MemoCard', () => {
     })
 
     // 日付が正しくフォーマットされているか確認
-    expect(wrapper.find('.created-at').text()).toContain('2022/1/1 14:30')
+    expect(wrapper.find('.created-at').text()).toContain('2022/01/01 14:30')
 
     // メモの内容が表示されているか確認
     expect(wrapper.find('.memo-content').html()).toContain('This is a test content.')

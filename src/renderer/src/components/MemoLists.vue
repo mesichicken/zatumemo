@@ -11,6 +11,7 @@ const noteBookStore = useNotebookStore()
 const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
 const memoList = ref<Memo[]>([])
+const enableAnimation = ref(true)
 
 const fetchMemoData = async (): Promise<void> => {
   try {
@@ -41,8 +42,12 @@ const scrollToBottom = () => {
 
 watchEffect(async () => {
   if (noteBookStore.currentNotebook) {
+    enableAnimation.value = false // アニメーションを無効化
     await fetchMemoData()
     scrollToBottom()
+    nextTick(() => {
+      enableAnimation.value = true // データ更新後にアニメーションを再度有効化
+    })
   } else {
     memoList.value = []
   }
@@ -107,16 +112,16 @@ const visiblePopup = (visible: boolean) => {
     class="memo-lists scrollable-content bg-gray-700 text-gray-50"
     :style="{ height: `calc(100vh - ${memoFormHeight}px)` }"
   >
-    <ul>
+    <TransitionGroup :name="enableAnimation ? 'memo-list' : ''" tag="ul">
       <li
-        v-for="(memo, index) in memoList"
-        :key="index"
+        v-for="memo in memoList"
+        :key="memo.id"
         class="container px-1 py-2 border-b-2 border-gray-500 hover:bg-gray-600"
         @contextmenu="(event) => onRightClick(event, memo.id)"
       >
         <MemoCard :memo="memo" />
       </li>
-    </ul>
+    </TransitionGroup>
   </div>
   <MemoForm
     v-if="noteBookStore.currentNotebook"
@@ -162,5 +167,16 @@ const visiblePopup = (visible: boolean) => {
 /* スクロールバーのつまみがホバーされたときのスタイル */
 .scrollable-content::-webkit-scrollbar-thumb:hover {
   background-color: #a0a0a0; /* ホバー時のつまみの色 */
+}
+
+// メモのアニメーション
+.memo-list-enter-active,
+.memo-list-leave-active {
+  transition: all 0.5s ease;
+}
+.memo-list-enter-from,
+.memo-list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>

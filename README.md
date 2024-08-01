@@ -22,12 +22,6 @@ $ npm install
 $ npm run dev
 ```
 
-### test
-
-```bash
-$ npx vitest --config vitest.config.ts
-```
-
 ### Build
 
 ```bash

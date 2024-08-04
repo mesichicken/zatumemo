@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from 'vue'
-import { Notebook } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
 import PopupMenu from './PopupMenu.vue'
 import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
@@ -8,29 +7,14 @@ const notebookStore = useNotebookStore()
 const editingNotebookName = ref<string>('')
 
 onMounted(async () => {
-  try {
-    /* @ts-ignore dbOpでエラーを出さない */
-    const data = await window.dbOp.selectAllNotebook()
-    await notebookStore.setNotebooks(data)
-    notebookStore.setCurrentNotebook(data[0])
-  } catch (error) {
-    console.error('Error fetching data:', error)
-    alert('ノートブックの取得に失敗しました')
-  }
+  await notebookStore.prepareNotebooks()
 })
 
 const onAddNotebook = async (): Promise<void> => {
-  try {
-    /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.insertNotebook(editingNotebookName.value)
-    /* @ts-ignore dbOpでエラーを出さない */
-    const notebook: Notebook = await window.dbOp.selectLastNotebook()
-    notebookStore.addNotebook(notebook)
-    notebookStore.setCurrentNotebook(notebook)
-  } catch (error) {
-    console.error(error)
-    alert('ノートブック追加時にエラーが発生しました')
+  if (!editingNotebookName.value) {
+    return
   }
+  notebookStore.addNotebook(editingNotebookName.value)
 
   editingNotebookName.value = ''
   toggleEditNotebookModal()
@@ -59,19 +43,11 @@ const {
 } = useRightClickPopup()
 
 const deleteNotebookAction = async () => {
-  try {
-    if (!popupNotebookId.value) {
-      throw new Error('Invalid notebook id')
-    }
-    /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.deleteNotebook(popupNotebookId.value)
-    notebookStore.deleteNotebook(popupNotebookId.value)
-    closePopup()
-    notebookStore.setCurrentNotebook(notebookStore.notebooks[0])
-  } catch (error) {
-    console.error('Error deleting notebook:', error)
-    alert('ノートブックの削除に失敗しました')
+  if (!popupNotebookId.value) {
+    return
   }
+  await notebookStore.deleteNotebook(popupNotebookId.value)
+  closePopup()
 }
 
 const visiblePopup = (visible: boolean) => {

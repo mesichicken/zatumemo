@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { Memo } from '@renderer/types'
 import { useNotebookStore } from '@renderer/store/notebook'
+import { useMemoStore } from '@renderer/store/memo'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 const notebookStore = useNotebookStore()
+const memoStore = useMemoStore()
 const quillEditorRef = ref()
 
 const emit = defineEmits(['formHeightChanged', 'scrollToBottom', 'add'])
@@ -36,11 +37,9 @@ const onAdd = async (): Promise<void> => {
     if (!isMessageSendable.value) {
       return
     }
-    /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.insertMemo(memo_content.value, notebookStore.currentNotebook.id)
-    /* @ts-ignore dbOpでエラーを出さない */
-    const Memo: Memo = await window.dbOp.selectLastMemo()
-    emit('add', Memo)
+    await memoStore.addMemo(memo_content.value, notebookStore.currentNotebook.id)
+
+    emit('add')
     quillEditorRef.value.setHTML('')
   } catch (error) {
     console.error(error)

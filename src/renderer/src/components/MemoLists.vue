@@ -1,42 +1,34 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, nextTick, watchEffect } from 'vue'
-import { Memo } from '@renderer/types'
 import MemoCard from './MemoCard.vue'
 import MemoForm from './MemoForm.vue'
 import PopupMenu from './PopupMenu.vue'
 import { useNotebookStore } from '@renderer/store/notebook'
+import { useMemoStore } from '@renderer/store/memo'
 import { useRightClickPopup } from '@renderer/composables/useRightClickPopup'
 const noteBookStore = useNotebookStore()
+const memoStore = useMemoStore()
 
 const memoListContainer = ref<HTMLElement | null>(null)
 const memoFormHeight = ref(0) // 高さを保存するためのリアクティブな変数を定義
-const memoList = ref<Memo[]>([])
 const enableAnimation = ref(true)
 
 const fetchMemoData = async (): Promise<void> => {
-  try {
-    if (!noteBookStore.currentNotebook) {
-      return
-    }
-    /* @ts-ignore dbOpでエラーを出さない */
-    const data = await window.dbOp.selectMemo(noteBookStore.currentNotebook.id)
-    memoList.value = data
-  } catch (error) {
-    console.error('Error fetching data:', error)
-    alert('メモの取得に失敗しました')
+  if (!noteBookStore.currentNotebook) {
+    return
   }
+  await memoStore.prepareMemos(noteBookStore.currentNotebook.id)
 }
 
-const scrollToBottom = () => {
+const scrollToBottom = async () => {
+  await nextTick()
   if (memoListContainer.value) {
     const container = memoListContainer.value
     // スクロールが必要かどうか判断(一番下までスクロールされているか)
     const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1
-    nextTick(() => {
-      if (!isAtBottom && memoListContainer.value) {
-        memoListContainer.value.scrollTop = memoListContainer.value.scrollHeight
-      }
-    })
+    if (!isAtBottom) {
+      container.scrollTop = container.scrollHeight
+    }
   }
 }
 
@@ -49,7 +41,7 @@ watchEffect(async () => {
       enableAnimation.value = true // データ更新後にアニメーションを再度有効化
     })
   } else {
-    memoList.value = []
+    memoStore.memos = []
   }
 })
 
@@ -72,10 +64,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', updateMemoFormHeight) // クリーンアップ
 })
 
-const onAddMemo = (memo: Memo): void => {
-  memoList.value = [...memoList.value, memo]
-  nextTick(updateMemoFormHeight)
-  scrollToBottom()
+const onAddMemo = async (): Promise<void> => {
+  await nextTick()
+  updateMemoFormHeight()
+  await scrollToBottom()
 }
 
 const {
@@ -87,18 +79,11 @@ const {
 } = useRightClickPopup()
 
 const deleteMemoAction = async () => {
-  try {
-    if (!popupMemoId.value) {
-      throw new Error('Invalid memo id')
-    }
-    /* @ts-ignore dbOpでエラーを出さない */
-    await window.dbOp.deleteMemo(popupMemoId.value)
-    memoList.value = memoList.value.filter((memo) => memo.id !== popupMemoId.value)
-    closePopup()
-  } catch (error) {
-    console.error('Error deleting memo:', error)
-    alert('メモの削除に失敗しました')
+  if (!popupMemoId.value) {
+    return
   }
+  await memoStore.deleteMemo(popupMemoId.value)
+  closePopup()
 }
 
 const visiblePopup = (visible: boolean) => {
@@ -114,7 +99,7 @@ const visiblePopup = (visible: boolean) => {
   >
     <TransitionGroup :name="enableAnimation ? 'memo-list' : ''" tag="ul">
       <li
-        v-for="memo in memoList"
+        v-for="memo in memoStore.memos"
         :key="memo.id"
         class="container px-1 py-2 border-b-2 border-gray-500 hover:bg-gray-600"
         @contextmenu="(event) => onRightClick(event, memo.id)"

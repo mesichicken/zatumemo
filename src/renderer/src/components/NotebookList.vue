@@ -58,7 +58,7 @@ const visiblePopup = (visible: boolean) => {
 <template>
   <div class="notebook-area bg-gray-900 border-r-2 border-gray-700 text-gray-50 p-2">
     <h1>
-      <img src="../assets/images/zatumemo-white.svg" alt="zatumemo" />
+      <img src="../assets/images/zatumemo-white.png" alt="zatumemo" />
     </h1>
     <template v-for="notebook in notebookStore.notebooks" :key="notebook.id">
       <h2
